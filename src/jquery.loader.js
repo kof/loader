@@ -23,22 +23,31 @@ var head = document.getElementsByTagName("head")[0] || document.documentElement,
     // pending requests
     pending = {length: 0},
     // predefined modules
-    modules = {};
+    modules = {},
+    loadedModules = {};
+
+
+// convenience function for instantiation   
+function loader( load, callback ) {
+    // settings is module name
+    if ( typeof load == 'string' ) {
+        return loadModule(load, callback);    
+    } else {
+        new init(load);
+        return loader;        
+    }
+}  
 
 /**
  * Load dependencies using config object or 
  * module name, that was defined in loader.def() before
  * @constructor loader
  * @param {Object, String} settings
- */    
-function loader( settings ) {
-    if ( !(this instanceof loader) ) {
-        new loader(settings);
-        return loader;        
-    }
-        
+ */ 
+function init( settings ) {
+
     var self = this,
-        s = this.settings = $.extend({}, loader.defaults, settings),
+        s = this.settings = $.extend(true, {}, loader.defaults, settings),
         progress = {
             total: 0,
             loaded: 0    
@@ -92,11 +101,10 @@ function loader( settings ) {
                 updateStatus.call(elem, url, 'error', 'timeout');
             }, s.timeout);
         }
-    });
-    
-}  
+    });    
+};
 
-loader.prototype = {
+init.prototype = {
     js: function js( url, callback ) {
         var done = false;
         // onload handler
@@ -155,11 +163,12 @@ loader.prototype = {
         );    
         
         // browser detection is bad, I know, but there is no other way to find out if stylesheet is loaded
-        // https://bugzilla.mozilla.org/show_bug.cgi?id=563176
+        // https://bugzilla.mozilla.org/show_bug.cgi?id=185236
         // opera has done a good job here, it fires onload callback
         // ie fires onreadystatechange - better then nothing
         // all other browsers have no callbacks, so we have to hack this and try to access 
         // link.sheet.cssRules property, which is accessible after stylesheet is loaded
+        // https://bugzilla.mozilla.org/show_bug.cgi?id=346945
         if ( !$.browser.msie && !$.browser.opera ) {
             function linkload(){
                 try {
@@ -175,6 +184,7 @@ loader.prototype = {
     
             // if the host of the url is different then window.location, firefox refuses access 
             // to the cssRules property, so no way to check the load - fire onload immediately
+            // https://bugzilla.mozilla.org/show_bug.cgi?id=563176
             $.browser.mozilla && remote ? onload.call(link) : linkload();
         }   
     
@@ -272,6 +282,38 @@ function dispatch( type, args, s ) {
     s.global && $.event.trigger(s.eventPrefix + type, args);        
 }
 
+
+/**
+ * Load module described in dependencies json
+ * @param {String} module
+ * @param {Function, Object} callback callback function or setting object
+ */
+function loadModule( module, callback ) {
+    if ( !modules[module] ) $.error('Module ' + module + ' does not exist.');
+    
+    var options = typeof callback == 'object' ? callback : {success: callback},
+        d = modules[module].depends;
+    
+    if ( d ) {
+        typeof d == 'string' && (d = [d]);
+        for ( var i=0; i < d.length; ++i ) {
+            if ( loadedModules[d[i]] ) {
+                loadModule(module, options);
+            } else {
+                loadModule(d[i], function(){
+                    loadedModules[d[i]] = true;
+                    new init($.extend(options, modules[module]));
+                });                
+            }
+        }
+    } else {
+        new init($.extend(options, modules[module]));
+    }
+    
+    return loader;
+}
+
+
 $.extend(loader, {
     // setter and getter for defaults
     setup: function( defaults ) {
@@ -281,7 +323,7 @@ $.extend(loader, {
         } else 
             return this.defaults;
     },
-    
+    init: init,
     // remove all scripts and stylesheets and clean gloaded object
     destroy: function( url ) {
         var remove = {};
@@ -304,10 +346,13 @@ $.extend(loader, {
         return this;    
     },
     
-    // getter and setter for dependencies definitions
-    def: function( d, callback ) {
-        
-        return this;
+    // getter and setter for modules dependencies definitions
+    def: function( m ) {
+        if ( m ) {
+            $.extend(modules, m);
+            return this;
+        } else
+            return modules[m] || modules;
     },
     
     // default settings

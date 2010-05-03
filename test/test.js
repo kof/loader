@@ -10,7 +10,7 @@ function getModules() {
         },
         'widget': {
             js: 'jquery.ui.widget.js',
-            css: 'themes/jquery.ui.theme.css'
+            css: 'jquery.ui.theme.css'
         },
         'ui.position': {
             js: 'jquery.ui.position.js'    
@@ -78,10 +78,10 @@ function getModules() {
     }
 }
 
-
+/*
 module('internals', {
     setup: function() {
-        stop(500);
+        stop(1000);
     },
     teardown: function() {
         delete $['ui'];
@@ -154,7 +154,7 @@ test('internal method image load without success', function(){
 
 module('loader', {
     setup: function() {
-        stop(500);
+        stop(1000);
         this.defaults = $.extend({}, $.loader.setup());
         $.loader.setup({
             base: 'data/',
@@ -296,7 +296,15 @@ test('load 2 independent files asynchron ( one css and one js file )', function(
     }); 
 });
 
+!$.browser.msie &&
 test('timeout test - load 3 independent files asynchron ( css, js and image ), js url is wrong', function(){
+
+    if ( QUnit.isLocal && $.browser.mozilla ) {
+        ok(false, 'FF can not be tested locally');
+        start();        
+        return;   
+    }
+    
     expect(7);
     var load = {
             js: 'jquery.ui.core-test.js',  // fake broken url
@@ -307,7 +315,7 @@ test('timeout test - load 3 independent files asynchron ( css, js and image ), j
     $.loader({
         js: load.js,
         css: load.css,
-        timeout: 200,
+        timeout: 100,
         error: function(url, error, s){
             ok(true, 'error callback');
             ok(s.base+s.root.js+load.js === url, 'faked url is correct');
@@ -315,7 +323,7 @@ test('timeout test - load 3 independent files asynchron ( css, js and image ), j
         complete: function(urls, status, s){
             ok(true, 'complete callback');
             ok($.inArray(s.base + s.root.js+load.js, urls)>=0 && $.inArray(s.base + s.root.css+load.css, urls)>=0, 'urls array is correct');
-            ok(status === 'error', 'status is correct');
+            ok(status === 'error', 'status ' + status + ' is correct');
             start();
         },
         progress: function(url, progress, s){
@@ -326,9 +334,15 @@ test('timeout test - load 3 independent files asynchron ( css, js and image ), j
     }); 
 });
 
-
-!(QUnit.isLocal && $.browser.mozilla) && 
-test('error test - load 3 independent files asynchron ( css, js and image ), js url is wrong [FF fails on this test if using local]', function(){
+//can't test this with msie, because there is no onerror callback
+!$.browser.msie &&
+test('error test - load 3 independent files asynchron ( css, js and image ), js url is wrong', function(){
+    if ( QUnit.isLocal && $.browser.mozilla ) {
+        ok(false, 'FF can not be tested locally');
+        start();        
+        return;   
+    }
+    
     expect(7);
     var load = {
             js: 'jquery.ui.core-test.js',  // fake broken url
@@ -341,7 +355,7 @@ test('error test - load 3 independent files asynchron ( css, js and image ), js 
         css: load.css,
         error: function(url, error, s){
             ok(true, 'error callback');
-            ok(s.base+s.root.js+load.js === url, 'faked url is correct');
+            ok(s.base+s.root.js+load.js === url, 'faked url '+ url +' is correct');
         },
         complete: function(urls, status, s){
             ok(true, 'complete callback');
@@ -406,7 +420,58 @@ test('check events', function(){
         }
     }); 
 });
+*/
 
+
+module('dependencies definitions', {
+    setup: function() {
+        stop(1000);
+        this.defaults = $.extend({}, $.loader.setup());
+        $.loader.setup({
+            base: 'data/',
+            root: {
+                js: 'ui/',
+                css: 'themes/',
+                img: 'themes/images/'
+            }
+        })
+    },
+    teardown: function() {
+        $.loader
+        .destroy()
+        .setup(this.defaults)
+        delete $['ui'];
+    }
+});
+
+test('setup definitions', function(){
+    $.loader.def(getModules());
+    same($.loader.def(), getModules(), 'success');
+    start();
+});
+
+/*
+test('load ui, use callback', function(){
+    expect(2);
+    var ui = getModules().ui;
+    $.loader('ui', function(urls, s){
+        var rurls = [s.base + s.root.js + ui.js, s.base + s.root.css + ui.css];
+        same(rurls, urls, 'urls array is correct');
+        ok(!!$.ui, '$.ui object exist');
+        start();
+    });
+    
+});
+*/
+
+test('load ui.mouse, use callback', function(){
+    $.loader('ui.mouse', function(urls, s){
+        console.log(arguments);
+        ok(true, 'test');
+        start();
+    });
+    
+});
 
 /*
 
