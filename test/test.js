@@ -78,7 +78,7 @@ function getModules() {
     }
 }
 
-/*
+
 module('internals', {
     setup: function() {
         stop(1000);
@@ -91,7 +91,7 @@ module('internals', {
 test('internal method for js load', function(){
    expect(3);
     var rurl = 'data/ui/jquery.ui.core.js';
-    var script = new $.loader().js(rurl, function(url, status){
+    var script = new $.loader.init().js(rurl, function(url, status){
         ok(true, 'js is loaded');
         ok(status === 'success', 'status is correct');
         ok(url === rurl, 'url is correct');
@@ -105,7 +105,7 @@ test('internal method for js load', function(){
 test('internal method for css load - same host', function(){
     expect(3);
     var rurl = 'data/themes/jquery.ui.core.css';
-    var link = new $.loader().css(rurl, function(url, status){
+    var link = new $.loader.init().css(rurl, function(url, status){
         ok(true, 'css is loaded');
         ok(status === 'success', 'status is correct');
         ok(url === rurl, 'url is correct');
@@ -118,7 +118,7 @@ test('internal method for css load - same host', function(){
 
 test('internal method for css load - external host', function(){
     expect(3);
-    var link = new $.loader().css(externalCss, function(url, status){
+    var link = new $.loader.init().css(externalCss, function(url, status){
         ok(true, 'css is loaded');
         ok(status === 'success', 'status is correct');
         ok(url === externalCss, 'url is correct');
@@ -132,7 +132,7 @@ test('internal method for css load - external host', function(){
 test('internal method for succsessfull image load', function(){
     expect(3);
     var rurl = 'data/themes/images/ui-icons_cd0a0a_256x240.png';
-    new $.loader().img(rurl, function(url, status){
+    new $.loader.init().img(rurl, function(url, status){
         ok(true, 'image is loaded');
         ok(status === 'success', 'status is correct');
         ok(rurl === url, 'url is correct');
@@ -143,7 +143,7 @@ test('internal method for succsessfull image load', function(){
 test('internal method image load without success', function(){
     expect(3);
     var rurl = 'data/themes/images/no-name-image.png';
-    new $.loader().img(rurl, function(url, status){
+    new $.loader.init().img(rurl, function(url, status){
         ok(true, 'image is loaded');
         ok(status === 'error', 'status is correct');
         ok(rurl === url, 'url is correct');
@@ -379,7 +379,7 @@ test('domCheck option', function(){
     var rurl = 'jquery.ui.core.js';
     // load script using internal method without registring
     // loaded script, and then load it using external api and check if it was double loaded
-    new $.loader().js('data/ui/'+rurl, function(){
+    new $.loader.init().js('data/ui/'+rurl, function(){
         $.loader({
             js: rurl,
             domCheck: true,
@@ -420,7 +420,7 @@ test('check events', function(){
         }
     }); 
 });
-*/
+
 
 
 module('dependencies definitions', {
@@ -466,7 +466,7 @@ test('load ui, use callback', function(){
 
 test('load ui.mouse, use callback', function(){
     $.loader('ui.mouse', function(urls, s){
-        console.log(arguments);
+        //console.log(arguments);
         ok(true, 'test');
         start();
     });
