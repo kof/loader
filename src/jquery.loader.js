@@ -1,9 +1,8 @@
 /**
- * jquery plugin for lazyload of js, css and images
+ * jQuery plugin for lazyload of js, css and images
  *
  * @version 0.6
- * @author Oleg Slobodskoi aka Kof
- * @website jsui.de
+ * @author Oleg Slobodskoi aka Kof http://jsui.de
  */
 
 (function($, document, plugin){
@@ -27,7 +26,11 @@ var head = document.getElementsByTagName("head")[0] || document.documentElement,
     loadedModules = {};
 
 
-// convenience function for instantiation   
+/**
+ * Convenience function for instantiation
+ * @param {string|Object} load
+ * @param {Object} callback
+ */   
 function loader( load, callback ) {
     // settings is module name
     if ( typeof load == 'string' ) {
@@ -42,7 +45,7 @@ function loader( load, callback ) {
  * Load dependencies using config object or 
  * module name, that was defined in loader.def() before
  * @constructor loader
- * @param {Object, String} settings
+ * @param {Object|string} settings
  */ 
 function init( settings ) {
 
@@ -60,7 +63,7 @@ function init( settings ) {
     dispatch('start', [], s);
     
     // load all files asychron
-    $.each('js css img'.split(' '), function load(i, type) {
+    $.each('js css img'.split(' '), function load(index, type) {
         if ( !s[type] ) return;
         
         var urls = typeof s[type] == 'string' ? [s[type]] : s[type];
@@ -98,14 +101,14 @@ function init( settings ) {
             }
             
             s.timeout && setTimeout(function(){
-                updateStatus.call(elem, url, 'error', 'timeout');
+                updateStatus.call(elem, url, 'error');
             }, s.timeout);
         }
     });    
 };
 
 init.prototype = {
-    js: function js( url, callback ) {
+    js: function( url, callback ) {
         var done = false;
         // onload handler
         function onload() {
@@ -125,14 +128,14 @@ init.prototype = {
                 onload: onload,
                 onreadystatechange: onload,
                 // currently only mozilla
-                onerror: function onerror( e ){
-                    callback && callback.call(this, url, 'error', e);    
+                onerror: function onerror(){
+                    callback && callback.call(this, url, 'error');    
                 }
             })
         );
     },
     
-    css: function css( url, callback ) {
+    css: function( url, callback ) {
         var done = false;
         // onload handler
         function onload() {
@@ -155,8 +158,8 @@ init.prototype = {
                 onload: onload,
                 onreadystatechange: onload,
                 // currently nobody supports this, but probably someday
-                onerror: function( e ){
-                    callback && callback.call(this, url, 'error', e);    
+                onerror: function(){
+                    callback && callback.call(this, url, 'error');    
                 }
                 
             })
@@ -172,11 +175,10 @@ init.prototype = {
         if ( !$.browser.msie && !$.browser.opera ) {
             function linkload(){
                 try {
-                    link.sheet.cssRules;
+                    link.sheet.cssRules && onload.call(link);
                 } catch(e) {
                     return setTimeout(linkload, 50);
                 }
-                onload.call(link);
             }
     
             var parts = rurl.exec( url ),
@@ -184,20 +186,19 @@ init.prototype = {
     
             // if the host of the url is different then window.location, firefox refuses access 
             // to the cssRules property, so no way to check the load - fire onload immediately
-            // https://bugzilla.mozilla.org/show_bug.cgi?id=563176
             $.browser.mozilla && remote ? onload.call(link) : linkload();
         }   
     
         return link;
     },
     
-    img: function img( url, callback ) {
+    img: function( url, callback ) {
         var img = new Image;
         img.onload = function onload() {
             callback.call(this, url, 'success');    
         };
-        img.onerror = function onerror( e ) {
-            callback.call(this, url, 'error', e);    
+        img.onerror = function onerror() {
+            callback.call(this, url, 'error');    
         };
         img.src = url;
         return img;
@@ -209,10 +210,10 @@ init.prototype = {
 /**
  * Helper function to call all pending callbacks,
  * and mark loaded urls, this has always element context 
- * @param {String} url
- * @param {String} status
+ * @param {string} url
+ * @param {string} status
  */
-function updateStatus( url, status, error ) {
+function updateStatus( url, status ) {
     if ( pending[url] ) {
         for( var i=0; i < pending[url].length; ++i) {
             pending[url][i].apply(this, arguments);    
@@ -229,10 +230,10 @@ function updateStatus( url, status, error ) {
 /**
  * Helper function for the check if the file is already loaded,
  * internal usage only
- * @param {String} url
- * @param {Boolean} domCheck
- * @param {String} type
- * @return {Boolean}
+ * @param {string} url
+ * @param {boolean} domCheck
+ * @param {string} type
+ * @return {boolean}
  */    
 function haveToLoad( url, domCheck, type, complete ) {
     // file is already successfull loaded
@@ -259,8 +260,8 @@ function haveToLoad( url, domCheck, type, complete ) {
   
 /**
  * Detect type using url,
- * @param {String} name
- * @return {String} type possible types: js, css, img, text, module
+ * @param {string} url
+ * @return {string} type possible types: js, css, img, text, module
  */
 function getType( url ) {
     return modules[url] ? 'module' : ( fileTypes[ url.substr(url.lastIndexOf('.')+1) ] || 'text' );
@@ -268,8 +269,7 @@ function getType( url ) {
 
 /**
  * Dispatch events and callbacks
- * @param {String} name
- * @param {Object} context
+ * @param {string} type
  * @param {Array} args
  * @param {Object} s
  */
@@ -285,11 +285,11 @@ function dispatch( type, args, s ) {
 
 /**
  * Load module described in dependencies json
- * @param {String} module
- * @param {Function, Object} callback callback function or setting object
+ * @param {string} module
+ * @param {Function|Object} callback function or setting object
  */
 function loadModule( module, callback ) {
-    if ( !modules[module] ) $.error('Module ' + module + ' does not exist.');
+    if ( !modules[module] ) $.error('Module "' + module + '" does not exist.');
     
     var options = typeof callback == 'object' ? callback : {success: callback},
         d = modules[module].depends;
@@ -315,7 +315,11 @@ function loadModule( module, callback ) {
 
 
 $.extend(loader, {
-    // setter and getter for defaults
+    init: init,
+    /**
+     * Getter and setter for defaults
+     * @param {Object|Undefined} defaults
+     */
     setup: function( defaults ) {
         if ( defaults ) {
             $.extend(true, loader.defaults, defaults);
@@ -323,30 +327,37 @@ $.extend(loader, {
         } else 
             return this.defaults;
     },
-    init: init,
-    // remove all scripts and stylesheets and clean gloaded object
-    destroy: function( url ) {
+    /**
+     * Destroy loaded - clean dom and gloaded object
+     * @param {string|Array|Undefined} name
+     */
+    destroy: function( name ) {
+        // urls list to remove
         var remove = {};
-        // name is a specific url
-        if ( typeof url == 'string' ) {
-            remove[url] = gloaded[url];
-        } else if ( $.isArray(url) ) {
-            for ( var i=0; i <= url.length; ++i ) {
-                remove[url[i]] = gloaded[url[i]];
+        // remove only one file
+        if ( typeof name == 'string' ) {
+            remove[name] = gloaded[name];
+        // remove an array of modules    
+        } else if ( $.isArray(name) ) {
+            for ( var i=0; i <= name.length; ++i ) {
+                remove[name[i]] = gloaded[name[i]];
             }
+        // remove all modules    
         } else  
             $.extend(remove, gloaded);
         
         for ( var url in remove ) {
             var type = getType(url);
-            if ( type == 'js' || type == 'css' )
-                gloaded[url].parentNode.removeChild(gloaded[url]);
+            ( type == 'js' || type == 'css' ) && gloaded[url].parentNode 
+            && gloaded[url].parentNode.removeChild(gloaded[url]);
             delete gloaded[url];
         }
         return this;    
     },
-    
-    // getter and setter for modules dependencies definitions
+    /**
+     * Getter and setter for modules dependencies definitions
+     * @param {Object|Undefined} m
+     */
     def: function( m ) {
         if ( m ) {
             $.extend(modules, m);
@@ -354,7 +365,17 @@ $.extend(loader, {
         } else
             return modules[m] || modules;
     },
-    
+    /**
+     * Getter and setter for global loaded files
+     * @param {string|Array|Undefined} urls
+     */
+    loaded: function( urls ) {
+        if ( urls ) {
+            typeof urls == 'string' ? (gloaded[urls] = true) : $.extend(gloaded, urls);  
+            return this;  
+        } else
+            return gloaded;
+    },
     // default settings
     defaults: {
         charset: 'UTF-8',
@@ -379,7 +400,7 @@ $.extend(loader, {
     }    
 });
 
-// provide public namespaces
+// provide public namespace
 $[plugin] = loader;
     
 })(jQuery, document, 'loader');
