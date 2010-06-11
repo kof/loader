@@ -1,3 +1,4 @@
+___registerLoaderModule___('jquery.ui.slider.js', function() {
 /*
  * jQuery UI Slider 1.8.1
  *
@@ -680,3 +681,5 @@ $.extend( $.ui.slider, {
 });
 
 }(jQuery));
+
+});

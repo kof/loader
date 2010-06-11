@@ -1,0 +1,25 @@
+"!" - means it is blocking (synchron load)
+
+ui.draggable:
+!ui.widget
+	  !ui.mouse
+		   ui.draggable.js
+
+ui.droppable:
+!ui.widget
+	  ui.droppable.js
+	  !ui.mouse
+		   ui.draggable
+
+ui.dialog:
+!ui.widget
+	  ui.dialog
+	  ui.button
+	  ui.position
+	  !ui.mouse	
+	 	   ui.draggable
+		   ui.resizable
+		   
+		   
+
+		   

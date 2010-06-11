@@ -1,3 +1,4 @@
+___registerLoaderModule___('jquery.ui.draggable.js', function() {
 /*
  * jQuery UI Draggable 1.8.1
  *
@@ -795,3 +796,4 @@ $.ui.plugin.add("draggable", "zIndex", {
 });
 
 })(jQuery);
+});

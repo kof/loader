@@ -1,3 +1,4 @@
+___registerLoaderModule___('jquery.ui.droppable.js', function() {
 /*
  * jQuery UI Droppable 1.8.1
  *
@@ -283,3 +284,5 @@ $.ui.ddmanager = {
 };
 
 })(jQuery);
+
+});

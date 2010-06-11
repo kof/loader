@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<head>
+    <title>loader demo</title>
+    
+<script type="text/javascript">
+
+
+var url = 'http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.js';
+
+var head = document.getElementsByTagName("head")[0] || document.documentElement;
+
+
+function preload1() {
+    var img = new Image;
+    img.onerror = function() {
+        alert('onerror');
+        //loadScript();
+    };
+    img.onload = function() {
+        alert('onload');
+    };
+    img.src = url;
+}
+  
+function preload2() {
+    var script = document.createElement('script');
+    script.src = url;
+    script.type = 'text/html';
+    script.onload = script.onreadystatechange = script.onerror = function() {
+            alert('onload|onerror');
+    };
+    head.insertBefore(script, head.firstChild);  
+}
+
+function preload3() {
+    var obj = document.createElement('object');
+    obj.data = url;
+    obj.onload = function() {
+        head.removeChild(obj);
+        alert('onload');
+    };
+    head.insertBefore(obj, head.firstChild);  
+
+}
+  
+  
+  
+
+function loadScript() {
+    var time = (new Date()).getTime();
+    var script = document.createElement('script'),
+        done = false;
+    script.src = url;
+    script.charset = 'UTF-8';
+    script.onload = script.onreadystatechange = function() {
+        if ( !done && (!this.readyState || /loaded|complete/.test(this.readyState) ) ) {
+            done = true;
+            //alert((new Date()).getTime() - time);
+        }
+    };
+    head.appendChild( script ); 
+};
+
+///preload1();
+//preload1();
+//loadScript();
+
+
+
+
+</script>
+    
+
+<!--
+
+           
+           
+Preloading (browser are cheating, so have to reload and cleanup the cache for each test)
+
+Opera - have to use image, using text/html load the file but there is no onload or onerror callback, so can't use script
+
+Chrome, both is working, text/html is better because image throws error in the console
+
+Safari - using script with text/html works fine, using image seems not to cache
+
+IE6 script is fine, using image makes it unpossible to load the script after that, have to restart the browser
+
+IE8, IE7 script is fine, image - no influence on cache
+
+FF image has onerror callback, but cach doesn't take it, script hasn't onerror/onload, so noway in FF, FUCK!
+
+-->
+
+
+    
+
+</head>
+<body>
+
+<button onclick="preload1()">Preload using Image</button>
+<button onclick="preload2()">Preload using script text/html</button>
+<button onclick="preload3()">Preload using object</button>
+<button onclick="loadScript()">Load script</button>
+<button onclick="alert(typeof jQuery)">Check if loaded</button>
+
+</body>
+</html>

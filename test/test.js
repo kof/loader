@@ -4,94 +4,125 @@ var externalCss = 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base
 
 function getModules() {
     return {
-        'ui': {
-            js: 'jquery.ui.core.js',
-            css: 'jquery.ui.core.css'
+        'jquery': {
+            js: 'jquery.js' 
         },
-        'widget': {
-            js: 'jquery.ui.widget.js',
-            css: 'jquery.ui.theme.css'
+        'ui.widget': {
+            depends: 'jquery',
+            root: {js: 'ui/'},
+            js: 'jquery.ui.core.js jquery.ui.widget.js',
+            css: 'jquery.ui.core.css jquery.ui.theme.css'
         },
         'ui.position': {
-            js: 'jquery.ui.position.js'    
+            js: 'jquery.ui.position.js',    
+            root: {js: 'ui/'},
         },
         'ui.mouse': {
-            depends: 'widget',
+            depends: 'ui.widget',
+            root: {js: 'ui/'},
             js: 'jquery.ui.mouse.js'    
         },
         'ui.draggable': {
-            depends: ['widget', 'ui.mouse'],
+            depends: 'ui.mouse',
+            root: {js: 'ui/'},
             js: 'jquery.ui.draggable.js'
         },
         'ui.droppable': {
-            depends: 'ui.draggable',
+            depends: 'ui.mouse ui.draggable',
+            root: {js: 'ui/'},
             js: 'jquery.ui.droppable.js'
         },
         'ui.resizable': {
-            depends: ['widget', 'ui.mouse'],
+            depends: 'ui.mouse',
+            root: {js: 'ui/'},
             js: 'jquery.ui.resizable.js',
             css: 'jquery.ui.resizable.css'
         },
         'ui.selectable': {
-            depends: ['widget', 'ui.mouse'],
+            depends: 'ui.mouse',
+            root: {js: 'ui/'},
             js: 'jquery.ui.selectable.js'
         },
         'ui.sortable': {
-            depends: ['widget', 'ui.mouse'],
+            depends: 'ui.mouse',
+            root: {js: 'ui/'},
             js: 'jquery.ui.sortable.js'
         },
         'ui.accordion': {
-            depends: 'widget',
+            depends: 'ui.widget',
+            root: {js: 'ui/'},
             js: 'jquery.ui.accordion.js',
             css: 'jquery.ui.accordion.css'
         },
         'ui.autocomplete': {
-            depends: ['widget', 'ui.position'],
+            depends: 'ui.widget ui.position',
+            root: {js: 'ui/'},
             js: 'jquery.ui.autocomplete.js',
             css: 'jquery.ui.autocomplete.css'    
         },
         'ui.button': {
-            depends: 'widget',
+            depends: 'ui.widget',
+            root: {js: 'ui/'},
             js: 'jquery.ui.button.js',
             css: 'jquery.ui.button.css'
         },
         'ui.progressbar': {
-            depends: 'widget',
+            depends: 'ui.widget',
+            root: {js: 'ui/'},
             js: 'jquery.ui.progressbar.js',
             css: 'jquery.ui.progressbar.css'
         },      
         'ui.slider': {
-            depends: ['widget', 'ui.mouse'],
+            depends: 'ui.mouse',
+            root: {js: 'ui/'},
             js: 'jquery.ui.slider.js',
             css: 'jquery.ui.slider.css'
         },          
         'ui.tabs': {
-            depends: 'widget',
+            depends: 'ui.widget',
+            root: {js: 'ui/'},
             js: 'jquery.ui.tabs.js',
             css: 'jquery.ui.tabs.css'
         },
         'ui.dialog': {
-            depends: ['widget', 'ui.position', 'ui.draggable', 'ui.resizable', 'ui.button'],
+            depends: 'ui.mouse ui.position ui.button ui.draggable ui.resizable',
+            root: {js: 'ui/'},
             js: 'jquery.ui.dialog.js',
             css: 'jquery.ui.dialog.css'
         }
     }
 }
 
+function deljQuery() {
+    delete window.jQuery;
+    delete window.$;
+}
 
+loader.setup({
+    base: 'data/',
+    root: {
+        js: '',
+        css: 'themes/',
+        img: 'themes/images/'
+    }
+});
+
+
+/*
 module('internals', {
     setup: function() {
         stop(1000);
     },
     teardown: function() {
-        delete $['ui'];
+        deljQuery();
     }
 });
 
+
 test('internal method for js load', function(){
    expect(3);
-    var rurl = 'data/ui/jquery.ui.core.js';
-    var script = new $.loader.init().js(rurl, function(url, status){
+    var rurl = 'data/jquery.js';
+    var script = new loader().js(rurl, function(url, status){
         ok(true, 'js is loaded');
         ok(status === 'success', 'status is correct');
         ok(url === rurl, 'url is correct');
@@ -102,10 +133,12 @@ test('internal method for js load', function(){
     });
 });
 
+
+
 test('internal method for css load - same host', function(){
     expect(3);
     var rurl = 'data/themes/jquery.ui.core.css';
-    var link = new $.loader.init().css(rurl, function(url, status){
+    var link = new loader().css(rurl, function(url, status){
         ok(true, 'css is loaded');
         ok(status === 'success', 'status is correct');
         ok(url === rurl, 'url is correct');
@@ -116,9 +149,10 @@ test('internal method for css load - same host', function(){
     });
 });
 
+
 test('internal method for css load - external host', function(){
     expect(3);
-    var link = new $.loader.init().css(externalCss, function(url, status){
+    var link = new loader().css(externalCss, function(url, status){
         ok(true, 'css is loaded');
         ok(status === 'success', 'status is correct');
         ok(url === externalCss, 'url is correct');
@@ -132,7 +166,7 @@ test('internal method for css load - external host', function(){
 test('internal method for succsessfull image load', function(){
     expect(3);
     var rurl = 'data/themes/images/ui-icons_cd0a0a_256x240.png';
-    new $.loader.init().img(rurl, function(url, status){
+    new loader().img(rurl, function(url, status){
         ok(true, 'image is loaded');
         ok(status === 'success', 'status is correct');
         ok(rurl === url, 'url is correct');
@@ -143,7 +177,7 @@ test('internal method for succsessfull image load', function(){
 test('internal method image load without success', function(){
     expect(3);
     var rurl = 'data/themes/images/no-name-image.png';
-    new $.loader.init().img(rurl, function(url, status){
+    new loader().img(rurl, function(url, status){
         ok(true, 'image is loaded');
         ok(status === 'error', 'status is correct');
         ok(rurl === url, 'url is correct');
@@ -151,42 +185,39 @@ test('internal method image load without success', function(){
     });
 });
 
+*/
+/*
+
+loader.remove();
+deljQuery();
+
+
+
+
 
 module('loader', {
     setup: function() {
         stop(1000);
-        this.defaults = $.extend({}, $.loader.setup());
-        $.loader.setup({
-            base: 'data/',
-            root: {
-                js: 'ui/',
-                css: 'themes/',
-                img: 'themes/images/'
-            }
-        });
     },
     teardown: function() {
-        $.loader
-        .destroy()
-        .setup(this.defaults);
-        delete $['ui'];
+        deljQuery();
     }
 });
 
-
 test('load one js file', function(){
     expect(8);
-    var rurl = 'jquery.ui.core.js';   
-    $.loader({
+    var rurl = 'jquery.js';   
+    loader({
         js: rurl,
         error: function(){
             ok(false, 'error callback');    
         },
         complete: function(urls, status, s){
             ok(true, 'complete callback');
-            var pr = s.base + s.root.js;
-            ok($.inArray(pr+rurl, urls)>=0, 'urls array is correct');
+            var url = s.base + s.root.js + rurl;
+            ok(urls[0]==url, 'urls array is correct');
             ok(status === 'success', 'status is correct');
+            start();
         },
         progress: function(url, progress, s){
             ok(true, 'progress callback');    
@@ -196,49 +227,50 @@ test('load one js file', function(){
         },
         success: function(urls, s){
             ok(true, 'success callback');
-            var pr = s.base + s.root.js;
-            ok($.inArray(pr+rurl, urls)>=0, 'urls array is correct');
-            start();
+            var url = s.base + s.root.js + rurl;
+            ok(urls[0]==url, 'urls array is correct');
         }
     }); 
 });
 
+
 test('load one css file', function(){
     expect(8);
     var rurl = 'jquery.ui.core.css';   
-    $.loader({
+    loader({
         css: rurl,
         error: function(){
             ok(false, 'error callback');    
         },
         complete: function(urls, status, s){
             ok(true, 'complete callback');
-            var pr = s.base + s.root.css;
-            ok($.inArray(pr+rurl, urls)>=0, 'urls array is correct');
+            var url = s.base + s.root.css + rurl;
+            ok(urls[0] == url, 'urls array is correct');
             ok(status === 'success', 'status is correct');
         },
         progress: function(url, progress, s){
             ok(true, 'progress callback');   
-            var pr = s.base + s.root.css;
-            ok(pr+rurl === url, 'url is correct');
+            var _url = s.base + s.root.css + rurl;
+            ok(_url == url, 'urls array is correct');
             same(progress, {total: 1, loaded: 1}, 'progress data is correct');
         },
         success: function(urls, s){
             ok(true, 'success callback');
-            var pr = s.base + s.root.css;
-            ok($.inArray(pr+rurl, urls)>=0, 'urls array is correct');
+            var url = s.base + s.root.css + rurl;
+            ok(urls[0] == url, 'urls array is correct');
             start();
         }
     }); 
 });
 
+
 test('load 2 independent js files asynchron', function(){
     expect(11);
-    var rurl1 = 'jquery.ui.core.js',
+    var rurl1 = 'jquery.js',
         rurl2 = 'jquery.ui.widget.js',
         eprogress = {total: 2, loaded: 0};
 
-    $.loader({
+    loader({
         js: [rurl1, rurl2],
         error: function(){
             ok(false, 'error callback');    
@@ -269,42 +301,38 @@ test('load 2 independent js files asynchron', function(){
 
 
 test('load 2 independent files asynchron ( one css and one js file )', function(){
-    expect(9);
-    var load = getModules().ui,
-        eprogress = {total: 2, loaded: 0};
+    expect(13);
+    var load = getModules()['ui.widget'],
+        files = (load.js+ ' ' + load.css).split(' '),
+        eprogress = {total: files.length, loaded: 0};
+        
     $.loader({
         js: load.js,
         css: load.css,
         error: function(){
             ok(false, 'error callback');    
         },
-        complete: function(urls, status, s){
-            ok(true, 'complete callback');
-            ok($.inArray(s.base + s.root.js+load.js, urls)>=0 && $.inArray(s.base + s.root.css+load.css, urls)>=0, 'urls array is correct');
-            ok(status === 'success', 'status is correct');
-        },
         progress: function(url, progress, s){
             ok(true, 'progress callback');
             ++eprogress.loaded;
             same(progress, eprogress, 'progress data is correct');
         },
+        complete: function(urls, status, s){
+            ok(true, 'complete callback');
+            ok(files.length == urls.length, 'urls array length is correct')
+            ok(status === 'success', 'status is correct');
+        },
         success: function(urls, s){
             ok(true, 'success callback');
-            ok($.inArray(s.base + s.root.js+load.js, urls)>=0 && $.inArray(s.base + s.root.css+load.css, urls)>=0, 'urls array is correct');
+            ok(files.length == urls.length, 'urls array length is correct')
             start();
         }
     }); 
 });
 
-!$.browser.msie &&
-test('timeout test - load 3 independent files asynchron ( css, js and image ), js url is wrong', function(){
 
-    if ( QUnit.isLocal && $.browser.mozilla ) {
-        ok(false, 'FF can not be tested locally');
-        start();        
-        return;   
-    }
-    
+
+test('timeout test - load 3 independent files asynchron ( css, js and image ), js url is wrong', function(){
     expect(7);
     var load = {
             js: 'jquery.ui.core-test.js',  // fake broken url
@@ -333,6 +361,7 @@ test('timeout test - load 3 independent files asynchron ( css, js and image ), j
         }
     }); 
 });
+
 
 //can't test this with msie, because there is no onerror callback
 !$.browser.msie &&
@@ -374,12 +403,14 @@ test('error test - load 3 independent files asynchron ( css, js and image ), js 
 
 
 
+
+
 test('domCheck option', function(){
     expect(3);
     var rurl = 'jquery.ui.core.js';
     // load script using internal method without registring
     // loaded script, and then load it using external api and check if it was double loaded
-    new $.loader.init().js('data/ui/'+rurl, function(){
+    new $.loader().js('data/ui/'+rurl, function(){
         $.loader({
             js: rurl,
             domCheck: true,
@@ -397,9 +428,9 @@ test('domCheck option', function(){
 
 
 test('check events', function(){
-    expect(7);
+    expect(9);
 
-    var load = getModules().ui;
+    var load = getModules()['ui.widget'];
      
     $(window).bind('loaderstart.test loadercomplete.test loadersuccess.test loaderprogress.test', function( e, s ){
         ok(true, e.type + ' event fired');
@@ -411,7 +442,7 @@ test('check events', function(){
         css: load.css,
         success: function(urls, s){
             ok(true, 'success callback');
-            ok($.inArray(s.base + s.root.js+load.js, urls)>=0 && $.inArray(s.base + s.root.css+load.css, urls)>=0, 'urls array is correct');
+            ok((load.js + ' ' + load.css).split(' ').length == urls.length, 'urls array length is correct');
             
             setTimeout(function(){
                 $(window).unbind('.test');    
@@ -421,208 +452,111 @@ test('check events', function(){
     }); 
 });
 
-
-
-module('dependencies definitions', {
+*/
+module('load modules', {
     setup: function() {
         stop(1000);
-        this.defaults = $.extend({}, $.loader.setup());
-        $.loader.setup({
-            base: 'data/',
-            root: {
-                js: 'ui/',
-                css: 'themes/',
-                img: 'themes/images/'
-            }
-        })
     },
     teardown: function() {
-        $.loader
-        .destroy()
-        .setup(this.defaults)
-        delete $['ui'];
+        loader.remove();
+        //deljQuery();
     }
 });
 
-test('setup definitions', function(){
-    $.loader.def(getModules());
-    same($.loader.def(), getModules(), 'success');
-    start();
-});
 
-/*
-test('load ui, use callback', function(){
+loader.remove();
+deljQuery();
+
+// setup loader
+loader.deps(getModules());
+    
+    
+test('load ui.widget, use callback', function(){
     expect(2);
-    var ui = getModules().ui;
-    $.loader('ui', function(urls, s){
-        var rurls = [s.base + s.root.js + ui.js, s.base + s.root.css + ui.css];
-        same(rurls, urls, 'urls array is correct');
-        ok(!!$.ui, '$.ui object exist');
+    loader('ui.dialog', function(module, deps, s){
+        same('ui.dialog', module, 'module is correct');
+        equal(typeof $.ui.dialog, 'function', '$.ui.dialog is object');
         start();
     });
     
 });
-*/
 
-test('load ui.mouse, use callback', function(){
-    $.loader('ui.mouse', function(urls, s){
-        //console.log(arguments);
-        ok(true, 'test');
-        start();
-    });
-    
-});
 
 /*
 
 
-/*
 
-module('dependencies', {
-    setup: function() {
-        this.settings = $.dep.setup();
-        this.dep = $.dep.def();
-        $.dep.setup({root: 'data/'})
-        .def(getPackage());
-    },
-    teardown: function() {
-        test0 = null;
-        $.dep.destroy('test0 test1 test2 test3 test4 test5 test0.test1')
-        .setup(this.settings).def(this.dep);
-    }
-});
-
-function getPackage() {
-    var p = {};
+(function(){
     
-    p['test0'] = 'test0.js';
+var modulesArray = [];
+
+$.each(getModules(), function(module, def){
+    module = module.split('.')[1];
+    module && modulesArray.push(module);
+});
+
+(function testModule( index ) {
+    var namespace = modulesArray[index],
+        module = 'ui.' + namespace;
     
-    p['test1'] = 'test0.js test0.test1.js';
+    if (!namespace) return;
     
-    p['test2'] = '[test0] test0.test1.js';
+    test('load "' + module + '", use only success callback', function(){
+        expect(4);
+        $.loader(module, function(_module, s){
+            ok(true, 'loaded');
+            same( _module, module, 'loaded module name is correct');
+            ok(typeof $.ui == 'object', '$.ui is object');
+            ok(typeof $.ui[namespace] != 'undefined', module +' is ' + typeof $.ui[namespace]);
+            start();
+            //testModule(++index);
+        });
+        
+    });
     
-    p['test3'] = [
-        'test3.css',
-        'test0.js test0.test1.js'
-    ];
+        
+})(2);
 
-    p['test3'] = [
-        'test3.css',
-        'test0.js test0.test1.js'
-    ];
 
-    p['test4'] = [
-        'test3.css',
-        '[test1] test4.js'
-    ];
 
-    p['test01'] = 'test0.test1.js';
-    p['test5'] = [
-        '[test0] [test01]',
-        'image.jpg'
-    ];
+(function testModule1( index ) {
+    var namespace = modulesArray[index],
+        module = 'ui.' + namespace;
     
-    p['test0.test1'] = 'test0.test1.js';
+    if (!namespace) return;
     
-    return p;
-}
-
-asyncTest('load test0 package', 2, function(){
-    var callback = false;
-    $.dep.load('test0', function(){
-        callback = true;
+    test('load "' + module + '", check all callbacks callback', function(){
+        expect(6);
+        $.loader(module, {
+            success: function(_module, s){
+                ok(true, 'success');
+                same( _module, module, 'loaded module name "'+ _module +'" is correct');
+                ok(typeof $.ui == 'object', '$.ui is object');
+                ok(typeof $.ui[namespace] != 'undefined', module +' is ' + typeof $.ui[namespace]);
+                start();
+                testModule1(++index);
+            },
+            complete: function(_module, status, s){
+                ok(true, 'complete');
+                same( _module, module, 'loaded module name "'+ _module +'" is correct');
+            },
+            error: function(_module, error, s){
+                ok(false, 'module "'+_module+'" caused error callback');
+            },            
+            progress: function(_module, progress, s){
+                  
+            }            
+                        
+        });
+        
     });
-    setTimeout(function(){
-        ok(callback, 'callback is called');
-        ok(typeof test0 == 'object', 'test0 ojbect is defined');
-        start();
-    }, 15);
-});
+    
+        
+})//(1);
 
-asyncTest('load test1 package', 3, function(){
-    var callback = false;
-    $.dep.load('test1', function(){
-        callback = true;
-    });
-    setTimeout(function(){
-        ok(callback, 'callback is called');
-        ok(typeof test0 == 'object', 'test0 ojbect is defined');
-        ok(typeof test0.test1 == 'object', 'test0.test1 ojbect is defined');
-        start();
-    }, 15);
-});
 
-asyncTest('load test2 package', 3, function(){
-    var callback = false;
-    $.dep.load('test2', function(){
-        callback = true;
-    });
-    setTimeout(function(){
-        ok(callback, 'callback is called');
-        ok(typeof test0 == 'object', 'test0 ojbect is defined');
-        ok(typeof test0.test1 == 'object', 'test0.test1 ojbect is defined');
-        start();
-    }, 15);
-});
 
-asyncTest('load test3 package', 4, function(){
-    var callback = false;
-    $.dep.load('test3', function(){
-        callback = true;
-    });
-    setTimeout(function(){
-        ok(callback, 'callback is called');
-        ok(typeof test0 == 'object', 'test0 ojbect is defined');
-        ok(typeof test0.test1 == 'object', 'test0.test1 ojbect is defined');
-        var $div = $('<div class="css-loaded-test"/>').appendTo(document.body);
-        ok( $div.width() == 100, 'css is loaded' );        
-        $div.remove();
-        start();
-    }, 30);
-});
-
-asyncTest('load test4 package', 5, function(){
-    var callback = false;
-    $.dep.load('test4', function(){
-        callback = true;
-    });
-    setTimeout(function(){
-        ok(callback, 'callback is called');
-        ok(typeof test0 == 'object', 'test0 ojbect is defined');
-        ok(typeof test0.test1 == 'object', 'test0.test1 ojbect is defined');
-        ok(typeof test4 == 'object', 'test4 object is defined');
-        var $div = $('<div class="css-loaded-test"/>').appendTo(document.body);
-        ok( $div.width() == 100, 'css is loaded' );        
-        $div.remove();
-        start();
-    }, 30);
-});
-
-asyncTest('load test5 package', 3, function(){
-    var callback = false;
-    $.dep.load('test5', function(){
-        callback = true;
-    });
-    setTimeout(function(){
-        ok(callback, 'callback is called');
-        ok(typeof test0 == 'object', 'test0 ojbect is defined');
-        ok(typeof test0.test1 == 'object', 'test0.test1 ojbect is defined');
-        start();
-    }, 15);
-});
-
-asyncTest('load test0.test1 package', 3, function(){
-    var callback = false;
-    $.dep.load('test0.test1', function(){
-        callback = true;
-    });
-    setTimeout(function(){
-        ok(callback, 'callback is called');
-        ok(typeof test0 == 'object', 'test0 ojbect is defined');
-        ok(typeof test0.test1 == 'object', 'test0.test1 ojbect is defined');
-        start();
-    }, 100);
-});
+})();
 
 
 

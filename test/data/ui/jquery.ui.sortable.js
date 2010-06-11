@@ -1,3 +1,4 @@
+___registerLoaderModule___('jquery.ui.sortable.js', function() {
 /*
  * jQuery UI Sortable 1.8.1
  *
@@ -1065,3 +1066,5 @@ $.extend($.ui.sortable, {
 });
 
 })(jQuery);
+
+});

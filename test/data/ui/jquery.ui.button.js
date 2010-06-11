@@ -1,3 +1,4 @@
+___registerLoaderModule___('jquery.ui.button.js', function() {
 /*
  * jQuery UI Button 1.8.1
  *
@@ -363,3 +364,5 @@ $.widget( "ui.buttonset", {
 });
 
 }( jQuery ) );
+
+});

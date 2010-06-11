@@ -1,4 +1,3 @@
-___registerLoaderModule___('jquery.ui.core.js', function() {
 /*!
  * jQuery UI 1.8.1
  *
@@ -8,6 +7,8 @@ ___registerLoaderModule___('jquery.ui.core.js', function() {
  *
  * http://docs.jquery.com/UI
  */
+
+this.uiModule = (function() {
 ;jQuery.ui || (function($) {
 
 //Helper functions and ui object
@@ -201,4 +202,5 @@ $.extend($.expr[':'], {
 });
 
 })(jQuery);
+
 });

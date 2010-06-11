@@ -1,3 +1,5 @@
+___registerLoaderModule___('jquery.ui.progressbar.js', function() {
+
 /*
  * jQuery UI Progressbar 1.8.1
  *
@@ -105,3 +107,4 @@ $.extend( $.ui.progressbar, {
 });
 
 })( jQuery );
+});

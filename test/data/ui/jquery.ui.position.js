@@ -1,3 +1,4 @@
+___registerLoaderModule___('jquery.ui.position.js', function() {
 /*
  * jQuery UI Position 1.8.1
  *
@@ -231,3 +232,5 @@ if ( !$.offset.setOffset ) {
 }
 
 }( jQuery ));
+
+});

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>loader demo</title>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.js"></script>
+    <script type="text/javascript" src="../src/jquery.loader.js"></script>
+    <script type="text/javascript" src="../src/jquery.loader.def.js"></script>
+
+    
+
+</head>
+<body>
+
+<script>
+    var img = new Image;
+    img.onerror = function() {
+        console.log(arguments);
+    };
+    img.onload = function(){
+        console.log(arguments);
+    }
+    img.src = '../test/data/ui/jquery.ui.core.js';
+
+</script>
+
+
+</body>
+</html>

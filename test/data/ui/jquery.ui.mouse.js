@@ -1,3 +1,4 @@
+___registerLoaderModule___('jquery.ui.mouse.js', function() {
 /*!
  * jQuery UI Mouse 1.8.1
  *
@@ -149,3 +150,5 @@ $.widget("ui.mouse", {
 });
 
 })(jQuery);
+
+});

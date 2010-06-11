@@ -1,3 +1,4 @@
+___registerLoaderModule___('jquery.ui.tabs.js', function() {
 /*
  * jQuery UI Tabs 1.8.1
  *
@@ -719,3 +720,5 @@ $.extend($.ui.tabs.prototype, {
 });
 
 })(jQuery);
+
+});

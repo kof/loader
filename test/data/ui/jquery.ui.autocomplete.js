@@ -1,3 +1,4 @@
+___registerLoaderModule___('jquery.ui.autocomplete.js', function() {
 /*
  * jQuery UI Autocomplete 1.8.1
  *
@@ -496,3 +497,5 @@ $.widget("ui.menu", {
 });
 
 }(jQuery));
+
+});

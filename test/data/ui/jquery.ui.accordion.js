@@ -1,3 +1,4 @@
+___registerLoaderModule___('jquery.ui.accordion.js', function() {
 /*
  * jQuery UI Accordion 1.8.1
  *
@@ -504,3 +505,4 @@ $.extend($.ui.accordion, {
 });
 
 })(jQuery);
+});

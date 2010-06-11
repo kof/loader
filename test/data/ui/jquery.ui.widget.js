@@ -1,3 +1,4 @@
+___registerLoaderModule___('jquery.ui.widget.js', function() {
 /*!
  * jQuery UI Widget 1.8.1
  *
@@ -234,3 +235,5 @@ $.Widget.prototype = {
 };
 
 })( jQuery );
+
+});

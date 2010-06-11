@@ -1,3 +1,4 @@
+___registerLoaderModule___('jquery.ui.resizable.js', function() {
 /*
  * jQuery UI Resizable 1.8.1
  *
@@ -797,3 +798,5 @@ var isNumber = function(value) {
 };
 
 })(jQuery);
+
+});

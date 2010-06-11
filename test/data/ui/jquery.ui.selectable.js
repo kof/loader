@@ -1,3 +1,4 @@
+___registerLoaderModule___('jquery.ui.selectable.js', function() {
 /*
  * jQuery UI Selectable 1.8.1
  *
@@ -259,3 +260,4 @@ $.extend($.ui.selectable, {
 });
 
 })(jQuery);
+});

@@ -1,3 +1,4 @@
+___registerLoaderModule___('jquery.ui.dialog.js', function() {
 /*
  * jQuery UI Dialog 1.8.1
  *
@@ -821,3 +822,5 @@ $.extend($.ui.dialog.overlay.prototype, {
 });
 
 }(jQuery));
+
+});
