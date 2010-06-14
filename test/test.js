@@ -14,8 +14,9 @@ function getModules() {
             css: 'jquery.ui.core.css jquery.ui.theme.css'
         },
         'ui.position': {
+            depends: 'jquery',
             js: 'jquery.ui.position.js',    
-            root: {js: 'ui/'},
+            root: {js: 'ui/'}
         },
         'ui.mouse': {
             depends: 'ui.widget',
@@ -95,7 +96,6 @@ function getModules() {
 
 function deljQuery() {
     delete window.jQuery;
-    delete window.$;
 }
 
 loader.setup({
@@ -104,95 +104,12 @@ loader.setup({
         js: '',
         css: 'themes/',
         img: 'themes/images/'
-    }
-});
-
-
-/*
-module('internals', {
-    setup: function() {
-        stop(1000);
     },
-    teardown: function() {
-        deljQuery();
-    }
+    timeout: 800
 });
 
-
-test('internal method for js load', function(){
-   expect(3);
-    var rurl = 'data/jquery.js';
-    var script = new loader().js(rurl, function(url, status){
-        ok(true, 'js is loaded');
-        ok(status === 'success', 'status is correct');
-        ok(url === rurl, 'url is correct');
-        setTimeout(function(){
-            script.parentNode.removeChild(script);    
-            start();
-        }, 20);
-    });
-});
-
-
-
-test('internal method for css load - same host', function(){
-    expect(3);
-    var rurl = 'data/themes/jquery.ui.core.css';
-    var link = new loader().css(rurl, function(url, status){
-        ok(true, 'css is loaded');
-        ok(status === 'success', 'status is correct');
-        ok(url === rurl, 'url is correct');
-        setTimeout(function(){
-            link.parentNode.removeChild(link);    
-            start();
-        }, 20);        
-    });
-});
-
-
-test('internal method for css load - external host', function(){
-    expect(3);
-    var link = new loader().css(externalCss, function(url, status){
-        ok(true, 'css is loaded');
-        ok(status === 'success', 'status is correct');
-        ok(url === externalCss, 'url is correct');
-        setTimeout(function(){
-            link.parentNode.removeChild(link);    
-            start();
-        }, 20);
-    });
-});
-
-test('internal method for succsessfull image load', function(){
-    expect(3);
-    var rurl = 'data/themes/images/ui-icons_cd0a0a_256x240.png';
-    new loader().img(rurl, function(url, status){
-        ok(true, 'image is loaded');
-        ok(status === 'success', 'status is correct');
-        ok(rurl === url, 'url is correct');
-        start();
-    });
-});
-
-test('internal method image load without success', function(){
-    expect(3);
-    var rurl = 'data/themes/images/no-name-image.png';
-    new loader().img(rurl, function(url, status){
-        ok(true, 'image is loaded');
-        ok(status === 'error', 'status is correct');
-        ok(rurl === url, 'url is correct');
-        start();
-    });
-});
-
-*/
-/*
-
-loader.remove();
-deljQuery();
-
-
-
+// add dependencies
+loader.deps( getModules() );
 
 
 module('loader', {
@@ -201,277 +118,209 @@ module('loader', {
     },
     teardown: function() {
         deljQuery();
+        // remove all loaded
+        loader.remove();
     }
 });
+
 
 test('load one js file', function(){
-    expect(8);
-    var rurl = 'jquery.js';   
+    expect(2);
+    var url = 'jquery.js';
     loader({
-        js: rurl,
-        error: function(){
-            ok(false, 'error callback');    
-        },
-        complete: function(urls, status, s){
-            ok(true, 'complete callback');
-            var url = s.base + s.root.js + rurl;
-            ok(urls[0]==url, 'urls array is correct');
-            ok(status === 'success', 'status is correct');
-            start();
-        },
-        progress: function(url, progress, s){
-            ok(true, 'progress callback');    
-            var pr = s.base + s.root.js;
-            ok(pr+rurl === url, 'url is correct');
-            same({total: 1, loaded: 1}, progress, 'progress data is correct');
-        },
-        success: function(urls, s){
-            ok(true, 'success callback');
-            var url = s.base + s.root.js + rurl;
-            ok(urls[0]==url, 'urls array is correct');
-        }
-    }); 
-});
-
-
-test('load one css file', function(){
-    expect(8);
-    var rurl = 'jquery.ui.core.css';   
-    loader({
-        css: rurl,
-        error: function(){
-            ok(false, 'error callback');    
-        },
-        complete: function(urls, status, s){
-            ok(true, 'complete callback');
-            var url = s.base + s.root.css + rurl;
-            ok(urls[0] == url, 'urls array is correct');
-            ok(status === 'success', 'status is correct');
-        },
-        progress: function(url, progress, s){
-            ok(true, 'progress callback');   
-            var _url = s.base + s.root.css + rurl;
-            ok(_url == url, 'urls array is correct');
-            same(progress, {total: 1, loaded: 1}, 'progress data is correct');
-        },
-        success: function(urls, s){
-            ok(true, 'success callback');
-            var url = s.base + s.root.css + rurl;
-            ok(urls[0] == url, 'urls array is correct');
+        js: url,
+        success: function( files, s ) {
+            ok(true, 'success callback is called');
+            ok(files[0] === s.base + url, 'url is correct');
             start();
         }
-    }); 
+    });
 });
 
-
-test('load 2 independent js files asynchron', function(){
-    expect(11);
-    var rurl1 = 'jquery.js',
-        rurl2 = 'jquery.ui.widget.js',
-        eprogress = {total: 2, loaded: 0};
-
-    loader({
-        js: [rurl1, rurl2],
-        error: function(){
-            ok(false, 'error callback');    
-        },
-        complete: function(urls, status, s){
-            ok(true, 'complete callback');
-             var pr = s.base + s.root.js;
-            ok($.inArray(pr+rurl1, urls)>=0 && $.inArray(pr+rurl2, urls)>=0, 'urls array is correct');
-            ok(status === 'success', 'status is correct');
-        },
-        progress: function(url, progress, s){
-            ok(true, 'progress callback');
-            var pr = s.base + s.root.js;    
-            ok(pr+rurl1 == url || pr+rurl2 == url, 'url is correct');
-            ++eprogress.loaded;
-            same(progress, eprogress, 'progress data is correct');
-        },
-        success: function(urls, s){
-            ok(true, 'success callback');
-             var pr = s.base + s.root.js;
-            ok($.inArray(pr+rurl1, urls)>=0 && $.inArray(pr+rurl2, urls)>=0, 'urls array is correct');
-            start();
-        }
-    }); 
-});
-
-
-
-
-test('load 2 independent files asynchron ( one css and one js file )', function(){
-    expect(13);
-    var load = getModules()['ui.widget'],
-        files = (load.js+ ' ' + load.css).split(' '),
-        eprogress = {total: files.length, loaded: 0};
-        
-    $.loader({
-        js: load.js,
-        css: load.css,
-        error: function(){
-            ok(false, 'error callback');    
-        },
-        progress: function(url, progress, s){
-            ok(true, 'progress callback');
-            ++eprogress.loaded;
-            same(progress, eprogress, 'progress data is correct');
-        },
-        complete: function(urls, status, s){
-            ok(true, 'complete callback');
-            ok(files.length == urls.length, 'urls array length is correct')
-            ok(status === 'success', 'status is correct');
-        },
-        success: function(urls, s){
-            ok(true, 'success callback');
-            ok(files.length == urls.length, 'urls array length is correct')
-            start();
-        }
-    }); 
-});
-
-
-
-test('timeout test - load 3 independent files asynchron ( css, js and image ), js url is wrong', function(){
-    expect(7);
-    var load = {
-            js: 'jquery.ui.core-test.js',  // fake broken url
-            css: 'jquery.ui.core.css'
-        },
-        eprogress = {total: 2, loaded: 0};
-    
-    $.loader({
-        js: load.js,
-        css: load.css,
-        timeout: 100,
-        error: function(url, error, s){
-            ok(true, 'error callback');
-            ok(s.base+s.root.js+load.js === url, 'faked url is correct');
-        },
-        complete: function(urls, status, s){
-            ok(true, 'complete callback');
-            ok($.inArray(s.base + s.root.js+load.js, urls)>=0 && $.inArray(s.base + s.root.css+load.css, urls)>=0, 'urls array is correct');
-            ok(status === 'error', 'status ' + status + ' is correct');
-            start();
-        },
-        progress: function(url, progress, s){
-            ok(true, 'progress callback');
-            ++eprogress.loaded;
-            same(progress, eprogress, 'progress data is correct');
-        }
-    }); 
-});
-
-
-//can't test this with msie, because there is no onerror callback
-!$.browser.msie &&
-test('error test - load 3 independent files asynchron ( css, js and image ), js url is wrong', function(){
-    if ( QUnit.isLocal && $.browser.mozilla ) {
-        ok(false, 'FF can not be tested locally');
-        start();        
-        return;   
-    }
-    
-    expect(7);
-    var load = {
-            js: 'jquery.ui.core-test.js',  // fake broken url
-            css: 'jquery.ui.core.css'
-        },
-        eprogress = {total: 2, loaded: 0};
-    
-    $.loader({
-        js: load.js,
-        css: load.css,
-        error: function(url, error, s){
-            ok(true, 'error callback');
-            ok(s.base+s.root.js+load.js === url, 'faked url '+ url +' is correct');
-        },
-        complete: function(urls, status, s){
-            ok(true, 'complete callback');
-            ok($.inArray(s.base + s.root.js+load.js, urls)>=0 && $.inArray(s.base + s.root.css+load.css, urls)>=0, 'urls array is correct');
-            ok(status === 'error', 'status is correct');
-            start();
-        },
-        progress: function(url, progress, s){
-            ok(true, 'progress callback');
-            ++eprogress.loaded;
-            same(progress, eprogress, 'progress data is correct');
-        }
-    }); 
-});
-
-
-
-
-
-
-test('domCheck option', function(){
+test('load one js file - test error callback', function(){
     expect(3);
-    var rurl = 'jquery.ui.core.js';
-    // load script using internal method without registring
-    // loaded script, and then load it using external api and check if it was double loaded
-    new $.loader().js('data/ui/'+rurl, function(){
-        $.loader({
-            js: rurl,
+    var url = 'file-not-exists.js';
+    loader({
+        js: url,
+        success: function( files, s ) {
+            ok(false, 'success callback is called');
+        },
+        error: function( file, message, s) {
+            ok(true, 'error callback is called');
+            ok(typeof message == 'string', 'error message is given');
+            ok(file === s.base + s.root.js + url, 'url is correct');
+            start();
+        }
+    });
+});
+
+
+test('load one css file - same host', function(){
+    expect(2);
+    var url = 'jquery.ui.core.css';
+    loader({
+        css: url,
+        success: function( files, s ) {
+            ok(true, 'success callback is called');
+            ok(files[0] === s.base + s.root.css + url, 'url is correct');
+            start();
+        }
+    });    
+});
+
+test('load one css file - external host (crossdomain)', function(){
+    expect(2);
+    loader({
+        css: externalCss,
+        success: function( files, s ) {
+            ok(true, 'success callback is called');
+            ok(files[0] === externalCss, 'url is correct');
+            start();
+        }
+    });    
+});
+
+test('load one css file - test error callback', function(){
+    expect(3);
+    var url = 'file-not-exists.css';
+    loader({
+        css: url,
+        success: function( files, s ) {
+            ok(false, 'success callback is called');
+        },
+        error: function( file, message, s) {
+            ok(true, 'error callback is called');
+            ok(typeof message == 'string', 'error message is given');
+            ok(file === s.base + s.root.css + url, 'url is correct');
+            start();
+        }
+    });
+});
+
+test('load one image file', function(){
+    expect(2);
+    var url = 'ui-icons_cd0a0a_256x240.png';
+    loader({
+        img: url,
+        success: function( files, s ) {
+            ok(true, 'success callback is called');
+            ok(files[0] === s.base + s.root.img + url, 'url is correct');
+            start();
+        }
+    });    
+});
+
+test('load an image file - test error callback', function(){
+    expect(2);
+    var url = 'no-name-image.png';
+    loader({
+        img: url,
+        error: function( file, message, s ) {
+            ok(true, 'error callback is called');
+            ok(file === s.base + s.root.img + url, 'url is correct');
+            start();
+        }
+    });
+});
+
+test('load 2 js files and test complete, progress and success callbacks', function(){
+    expect(9);
+    var files = ['jquery.js', 'ui/jquery.ui.widget.js'],
+        prg = {total: 2, loaded: 0};
+    loader({
+        js: files,
+        complete: function(urls, status, s){
+            ok(true, 'complete callback');
+            var pr = s.base + s.root.js;
+            same( urls, [pr + files[0], pr + files[1]], 'urls array is correct' );
+            ok(status === 'success', 'status success is correct');
+        },
+        progress: function(url, progress, s){
+            ok(true, 'progress callback');
+            ++prg.loaded;
+            same(progress, prg, 'progress data is correct');
+        },
+        success: function(urls, s){
+            ok(true, 'success callback');
+             var pr = s.base + s.root.js;
+            same( urls, [pr + files[0], pr + files[1]], 'urls array is correct' );
+            start();
+        }        
+        
+    });
+});
+
+test('load 3 files (1 css, 1 js, 1 image) and test complete, progress and success callbacks', function() {
+   expect(9);
+    var js = 'jquery.js',
+        css = 'jquery.ui.core.css',
+        img = 'ui-anim_basic_16x16.gif',
+        prg = {total: 3, loaded: 0};
+    loader({
+        js: js,
+        css: css,
+        img: img,
+        complete: function(urls, status, s){
+            ok(true, 'complete callback');
+            ok(status === 'success', 'status success is correct');
+        },
+        progress: function(url, progress, s){
+            ok(true, 'progress callback');
+            ++prg.loaded;
+            same(progress, prg, 'progress data is correct');
+        },
+        success: function(urls, s){
+            ok(true, 'success callback');
+            start();
+        }        
+        
+    });
+});
+
+
+
+
+test('test domCheck option', function(){
+    expect(4);
+    var url = 'jquery.js',
+        script;
+
+    (function( document, url, callback ){
+        var head = document.getElementsByTagName('head')[0] || document.documentElement;
+        
+        script = document.createElement('script');
+        script.src = url;
+        script.onload = script.onreadystatechange = function() {
+            if ( script && (!this.readyState || /loaded|complete/.test(this.readyState) ) ) {
+                script = null;
+                callback && callback();
+            }
+        };
+        head.insertBefore(script, head.firstChild);
+    })( document, 'data/' + url, function(){
+        loader.exec(url);
+        ok(typeof jQuery == 'function', 'jQuery was loaded' );
+        deljQuery();
+        
+        
+        
+        // loader should check, that jquery script is already loaded and don't load it again
+        loader({
+            js: url,
             domCheck: true,
-            success: function(urls, s){
+            success: function( urls, s ) {
                 ok(true, 'success callback called');
-                ok($.inArray(s.base+s.root.js+rurl, urls)>=0, 'urls param contains loaded file');
-                ok($('script[src*="'+ rurl +'"]').length == 1, 'script was loaded only once');
+                ok(urls[0] == s.base + s.root.js + url, 'urls is correct');
+                ok(typeof jQuery != 'function', 'jQuery was not loaded' );
                 start();
             }
-        });
+        });        
+
+
     });
-
 });
 
-
-
-test('check events', function(){
-    expect(9);
-
-    var load = getModules()['ui.widget'];
-     
-    $(window).bind('loaderstart.test loadercomplete.test loadersuccess.test loaderprogress.test', function( e, s ){
-        ok(true, e.type + ' event fired');
-    });
-    
-     
-    $.loader({
-        js: load.js,
-        css: load.css,
-        success: function(urls, s){
-            ok(true, 'success callback');
-            ok((load.js + ' ' + load.css).split(' ').length == urls.length, 'urls array length is correct');
-            
-            setTimeout(function(){
-                $(window).unbind('.test');    
-                start();
-            });
-        }
-    }); 
-});
-
-*/
-module('load modules', {
-    setup: function() {
-        stop(1000);
-    },
-    teardown: function() {
-        loader.remove();
-        //deljQuery();
-    }
-});
-
-
-loader.remove();
-deljQuery();
-
-// setup loader
-loader.deps(getModules());
-    
-    
-test('load ui.widget, use callback', function(){
+test('load ui.dialog, use callback', function(){
     expect(2);
     loader('ui.dialog', function(module, deps, s){
         same('ui.dialog', module, 'module is correct');
@@ -482,79 +331,35 @@ test('load ui.widget, use callback', function(){
 });
 
 
-/*
 
 
 
 (function(){
-    
-var modulesArray = [];
 
-$.each(getModules(), function(module, def){
-    module = module.split('.')[1];
-    module && modulesArray.push(module);
-});
+var modules = [];
+for ( var name in getModules() ) {
+    modules.push(name);
+}    
 
-(function testModule( index ) {
-    var namespace = modulesArray[index],
-        module = 'ui.' + namespace;
-    
-    if (!namespace) return;
-    
-    test('load "' + module + '", use only success callback', function(){
-        expect(4);
-        $.loader(module, function(_module, s){
+function callTest( i ) {
+    var name = modules[i];
+    test('load "' + name + '", use only success callback', function(){
+        //expect(4);
+        loader(name, function( module, s){
             ok(true, 'loaded');
-            same( _module, module, 'loaded module name is correct');
-            ok(typeof $.ui == 'object', '$.ui is object');
-            ok(typeof $.ui[namespace] != 'undefined', module +' is ' + typeof $.ui[namespace]);
+            same(  module, name, 'loaded module name is correct');
+            //ok(typeof $.ui == 'object', '$.ui is object');
+            var namespace = name.split('.').pop();
+            //ok(typeof $.ui[namespace] != 'undefined', namespace +' is ' + typeof $.ui[namespace]);
             start();
-            //testModule(++index);
+            i++;
+            callTest( i );
         });
         
-    });
+    });    
+}
     
-        
-})(2);
-
-
-
-(function testModule1( index ) {
-    var namespace = modulesArray[index],
-        module = 'ui.' + namespace;
-    
-    if (!namespace) return;
-    
-    test('load "' + module + '", check all callbacks callback', function(){
-        expect(6);
-        $.loader(module, {
-            success: function(_module, s){
-                ok(true, 'success');
-                same( _module, module, 'loaded module name "'+ _module +'" is correct');
-                ok(typeof $.ui == 'object', '$.ui is object');
-                ok(typeof $.ui[namespace] != 'undefined', module +' is ' + typeof $.ui[namespace]);
-                start();
-                testModule1(++index);
-            },
-            complete: function(_module, status, s){
-                ok(true, 'complete');
-                same( _module, module, 'loaded module name "'+ _module +'" is correct');
-            },
-            error: function(_module, error, s){
-                ok(false, 'module "'+_module+'" caused error callback');
-            },            
-            progress: function(_module, progress, s){
-                  
-            }            
-                        
-        });
-        
-    });
-    
-        
-})//(1);
-
-
+callTest(0);
 
 })();
 

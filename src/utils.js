@@ -2,9 +2,10 @@
  * Utils
  * Some of them borrowed by jQuery
  */
-var $ = (function(document, slice, toString){
+(function( global, document, slice, toString){
     
-    var root = $('head')[0] || document.documentElement;
+    var root = $('head')[0] || document.documentElement,
+        timestamp = (new Date).getTime();
     
     /**
      * A very simple selector engine
@@ -31,14 +32,14 @@ var $ = (function(document, slice, toString){
     $.extend = function( deep /*, obj, obj, ...*/ ) {
         // take first argument, if its not a boolean
         var args = arguments,
-            firstObj = typeof deep == 'boolean' ? 1 : 0,
-            target = args[firstObj];
+            firstArg = typeof deep == 'boolean' ? 1 : 0,
+            target = args[firstArg];
         
-        for ( var i=firstObj; i < args.length; ++i ) {
+        for ( var i = firstArg; i < args.length; ++i ) {
             for ( var key in args[i] ) {
                 // if deep extending and both of keys are objects
-                if ( deep === true && target[key] && $.typeOf(target[key]) == 'object' && $.typeOf(args[i][key]) == 'object' ) {
-                    $.extend(deep, target[key], args[i][key]);    
+                if ( deep === true && target[key] && $.typeOf(target[key]) === 'object' && $.typeOf(args[i][key]) === 'object' ) {
+                    args.callee(deep, target[key], args[i][key]);    
                 } else
                     target[key] = args[i][key];
             }            
@@ -79,7 +80,7 @@ var $ = (function(document, slice, toString){
     // script eval
     (function(){
         var script = document.createElement('script'),
-            id = 'script' + (new Date).getTime();
+            id = 'script' + timestamp++;
         script.type = 'text/javascript';
         try {
             script.appendChild( document.createTextNode( "window." + id + "=1;" ) );
@@ -90,11 +91,12 @@ var $ = (function(document, slice, toString){
         // Make sure that the execution of code works by injecting a script
         // tag with appendChild/createTextNode
         // (IE doesn't support this, fails, and uses .text instead)
-        if ( window[ id ] ) {
+        if ( global[ id ] ) {
             $.support.scriptEval = true;
-            delete window[ id ];
+            delete global[ id ];
         }
 
+        root.removeChild( script );
     })();
     
     $.error = function( msg ) {
@@ -141,7 +143,7 @@ var $ = (function(document, slice, toString){
         }
     };
     
-    return $;   
+    global.$ = $;   
  
-})(window.document, Array.prototype.slice, Object.prototype.toString);
+})(this, window.document, Array.prototype.slice, Object.prototype.toString);
    

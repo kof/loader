@@ -9,7 +9,7 @@
  * @license Dual licensed under the MIT and GPL licenses.
  * @author Oleg Slobodskoi aka Kof (http://jsui.de)
  */
-(function(global, document, $, namespace) {
+(function( global, document, $, namespace ) {
     
 var head = $('head')[0] || document.documentElement,
     // global loaded files
@@ -24,7 +24,7 @@ var head = $('head')[0] || document.documentElement,
  * @param {Object} options
  * @return {Function} loader
  */   
-function loader( options ) {
+function Loader( options ) {
     var constr = arguments.callee;
     
     if ( !(this instanceof constr) ) {
@@ -52,13 +52,12 @@ function loader( options ) {
         file = files[i];
         // only use base path if the url is not absolute
         if ( !$.regExp.url.test(file.url) )
-            file.url = s.base + file.url;                
+            file.url = s.base + s.root[file.type] + file.url;                
 
         if ( haveToLoad(file.url, s.domCheck, file.type, complete) ) {
             // pending[url] is a callbacks array
             pending[file.url] = [complete];
             ++pending.__length;
-            
             var elem = self[file.type](file.url, updateStatus);
             
             s.timeout && setTimeout(function(){
@@ -88,7 +87,7 @@ function loader( options ) {
 
 // define prototype for constructor
 // all methods are for internal use
-loader.prototype = {
+Loader.prototype = {
     /**
      * Load script
      * @param {string} url
@@ -188,7 +187,7 @@ loader.prototype = {
                 done = true;
                 // Handle memory leak in IE
                 elem.onload = elem.onreadystatechange = null;
-                //elem.nodeName == 'SCRIPT' && removeNode(elem);
+                elem.nodeName === 'SCRIPT' && removeNode(elem);
                 callback && callback.call(this, url, 'success');
             }
         }
@@ -238,37 +237,36 @@ function updateStatus( url, status ) {
  * @return {boolean}
  */    
 function haveToLoad( url, domCheck, type, complete ) {
+    
     // file is already successfull loaded
     if ( gloaded[url] ) {
         updateStatus.call(gloaded[url], url, 'success');
         return false;
     // this file is loading                
-    } else if (pending[url]) {
+    } else if ( pending[url] ) {
         // just add a callback
-        pending[url].push(complete);
+        pending[url].push( complete );
         return false;
     // if domCheck is enabled and type is js or css 
-    } else if (domCheck && (type === 'js' || type === 'css')) {
+    } else if ( domCheck && (type === 'js' || type === 'css') ) {
+        
         // try to find link or script in the dom
         var attr = type === 'js' ? 'src' : 'href',
             tag = type === 'js' ? 'script' : 'link',
             elems = $(tag),
-            found = false;
+            i;
+            
         if ( elems.length ) {
-            for ( var i = 0; i < elems.length; ++i ) {
-                if ( elems[i] == url ) {
-                    found = elems[i];               
-                    break;                    
+            for ( i = 0; i < elems.length; ++i ) {
+                if ( elems[i][attr].indexOf(url) >= 0 ) {
+                    pending[url] = [complete];
+                    updateStatus.call( elems[i], url, 'success' );
+                    return false;                   
                 }
             }
         }            
-
-        if ( found ) {
-            pending[url] = [complete];
-            updateStatus.call(found, url, 'success');
-            return false;    
-        }
     }
+    
     return true;         
 }
 
@@ -298,11 +296,11 @@ function haveToLoad( url, domCheck, type, complete ) {
  * @param {Object} elem dom node
  */
 function removeNode( elem ) {
-   //elem && elem.parentNode && elem.parentNode.removeChild(elem); 
+   elem && elem.parentNode && elem.parentNode.removeChild(elem); 
 }
 
 // public api
-$.extend(loader, {
+$.extend(Loader, {
     /**
      * Getter and setter for defaults
      * @param {Object|undefined} defaults
@@ -376,6 +374,8 @@ $.extend(loader, {
         types: ['js', 'css', 'img', 'text'],
         // base url bath for all requests
         base: '',
+        // root path for each file type, will be added to the base path
+        root: {js: '', css: '', img: '', text: ''},
         // separator for files or modules lists, when used instead of array
         separator: ' ',
         // will be added to each link element
@@ -397,6 +397,6 @@ $.extend(loader, {
 });
 
 // provide public namespace
-global[namespace] = loader;
+global[namespace] = Loader;
 
 })(this, window.document, $, 'loader');

@@ -7,42 +7,44 @@
  * @author Oleg Slobodskoi aka Kof (http://jsui.de)
  */
 
-(function(global, $, namespace){
+(function( global, $, namespace ){
     
     // all packages dependencies
 var dependencies = {},
     // reference to the original loader constructor
-    _loader = global[namespace],
+    _Loader = global[namespace],
     // original prototype
-    proto = _loader.prototype,
+    proto = _Loader.prototype,
     // all loaded files
     gloaded = {},
     // all registered modules
     registred = {},
     //timestamp = (new Date).getTime(),
+    // defines if the code is surrounded with closure
     rclosureContent = /{(.*)}/;
 
 /**
  * Load module described in dependencies json
+ * @constructor
  * @param {string|Object} module
  * @param {Function|Object} [options] function or options object
  * @return {Function}
  */
-function loader( module, options ) {
+function Loader( module, options ) {
     var fn = arguments.callee;
     // module is files object - use original loader
-    if ( $.typeOf(module) != 'string' ) {
-        new _loader(module);    
+    if ( $.typeOf(module) !== 'string' ) {
+        new _Loader(module);    
         return fn;        
     }
     
     isModule(module);
     
     // its a success callback
-    $.typeOf(options) == 'function' && (options = {success: options});
+    $.typeOf(options) === 'function' && (options = {success: options});
         
-    var // merge original options with defaults if not already done
-        oSettings = $.extend(true, {}, fn.defaults, options);         
+        // merge original options with defaults if not already done
+    var oSettings = $.extend(true, {}, fn.defaults, options);         
         
         // failed dependencies
     var errors = [],
@@ -55,23 +57,10 @@ function loader( module, options ) {
     function oncomplete( urls, status, s ) {
         if ( s.js ) {
             // call or eval all modules synchron
-            var i = 0, url, fileName, parts;
-            for ( ; i < deps.js.length; ++i ) {
+            for ( var i = 0, url, parts; i < deps.js.length; ++i ) {
                 url = deps.js[i];
-                parts = $.regExp.file.exec(url);
-                fileName = parts ? parts[2] : url;
-                if ( registred[fileName] ) {
-                     if ( registred[fileName].globalEval ) {
-                         var parts = rclosureContent.exec(registred[fileName].toString().replace(/\n/g, ''));
-                         if ( parts && parts[1] ) {
-                            parts[1] = 'try{' + parts[1] + '} catch(e) {\
-                                throw e.name + ": " + e.message + ". File name: " + "' + url + '" + ". Because of globalEval is the line number undefined.";\
-                            }';                            
-                            $.globalEval( parts[1] );   
-                         }
-                     } else
-                        registred[fileName]();        
-                }
+                parts = $.regExp.file.exec( url );
+                fn.exec( parts ? parts[2] : url );
             }
         }        
         
@@ -92,7 +81,9 @@ function loader( module, options ) {
         proto.dispatch('progress', [url, progress], oSettings);
     }
     
-    new _loader($.extend({}, oSettings, {
+    // load js files separate from all other, because we can execute
+    // after all dependencies are loaded, so no need to wait for other file types
+    new _Loader($.extend({}, oSettings, {
         success: null,
         start: null,
         css: null,
@@ -104,7 +95,8 @@ function loader( module, options ) {
         error: onerror
     }));
     
-    new _loader($.extend({}, oSettings, {
+    // load css, img and text
+    new _Loader($.extend({}, oSettings, {
         success: null,
         start: null,
         js: null,
@@ -127,45 +119,46 @@ function parseDeps( module, s, deps) {
     
     var i, files, type,
         m = dependencies[module];
-    
+
     // add all dependencies
-    var depends = split(m.depends);
+    var depends = split( m.depends );
     if ( depends.length ) {
         for ( i=0; i<depends.length; ++i ) {
             parseDeps(depends[i], s, deps);
         }            
     }    
+
     // parse all files for current module
     for ( i=0; i < s.types.length; ++i ) {
         type = s.types[i];
         files = m[type];
         if ( files ) {
-            files = split(files);
-            !deps[type] && (deps[type] = []);
-            var k=0, file;
-            for ( ; k<files.length; ++k ) {
-                file = (m.root && m.root[type] ? m.root : s.root)[type] + files[k];
+            files = split( files );
+            !deps[type] && ( deps[type] = [] );
+            for ( var k=0, file; k < files.length; ++k ) {
+                // add module root path to each file url
+                file = m.root && m.root[type] ? m.root[type] + files[k] : files[k];
+                // avoid dublicate files
                 if ( !deps.hash[file] ) {
-                    deps[type].push(file);
-                    deps.hash[file] = deps[type].length;
+                    deps[type].push( file );
+                    deps.hash[file] = true;
                     ++deps.count;    
                 }
             }
         }
     }     
-
   
     return deps;
 }
 
 /**
  * Check if the module is defined, else throw an error
- * XXX throw an error or just call error callback ?
+ * XXX throw an error or just call an error callback ?
  * @param {string} module
  */
 function isModule( module ) {
     if ( !dependencies[module] ) 
-        $.error('Module "' + module + '" does not exist.');
+        $.error( 'Module "' + module + '" does not exist.' );
     return true;    
 }
 
@@ -176,10 +169,10 @@ function isModule( module ) {
  * @return {Array}
  */
 function split( items, separator ) {
-    return $.typeOf(items) == 'string' ? items.split(separator || loader.defaults.separator) : (items || []);
+    return $.typeOf(items) === 'string' ? items.split( separator || Loader.defaults.separator ) : ( items || [] );
 }
 
-$.extend(true, loader, _loader, {
+$.extend(true, Loader, _Loader, {
     /**
      * Getter and setter for dependencies
      * @param {Object|undefined|string} deps
@@ -187,7 +180,7 @@ $.extend(true, loader, _loader, {
      */
     deps: function( deps ) {
         if ( deps ) {
-            $.extend(dependencies, deps);
+            $.extend( dependencies, deps );
             return this;
         } else
             return dependencies[deps] || dependencies;        
@@ -211,27 +204,47 @@ $.extend(true, loader, _loader, {
                         type == 'depends' && deep ? self.remove(items[i], true) : urls.push(items[i]);
                     }
                 });
-                _loader.remove(urls);    
+                _Loader.remove( urls );    
                 delete gloaded[module];
             }
         // it can ba an url, urls array or undefined
         } else {
             // its an url or urls array           
-            _loader.remove(module);
+            _Loader.remove(module);
             // if undefined - remove all loaded
             !module && (gloaded = {});
          }
             
         return this;    
     },
-    defaults: {
-        // root path for each file type, will be added to the base path
-        root: {js: '', css: '', img: '', text: ''},
+    /**
+     * Execute closure with a module 
+     * @param {String} module
+     * @return {Function}
+     */
+    exec: function( fileName ) {
+        if ( !registred[fileName] ) return this;
+        // if globalEval is set, we have to execute the code in global context,
+        // because the code contains private methods and variables
+        if ( registred[fileName].globalEval ) {
+            var parts = rclosureContent.exec( registred[fileName].toString().replace(/\n/g, '') );
+            // code is surrounded with closure, so we have to eval it in global context 
+            if ( parts && parts[1] ) {
+                // surround the code with try and catch, to be able to name the file name in case of errors 
+                parts[1] = 'try{' + parts[1] + '} catch(e) {\
+                throw e.name + ": " + e.message + ". File name: " + "' + url + '" + ". Because of globalEval is the line number undefined.";\
+                }';                            
+                $.globalEval( parts[1] );   
+            }
+        } else
+            // just call the closure
+            registred[fileName]();        
+        return this;    
     }
 });
 
 // expose new loader function
-global[namespace] = loader;
+global[namespace] = Loader;
 
 
 /**
@@ -247,4 +260,4 @@ global.___registerLoaderModule___ = function registerModule( id, fn, globalEval 
     registred[id] = fn;
 };
 
-})(this, $, 'loader');
+})( this, $, 'loader' );
