@@ -50,7 +50,7 @@ function Loader( module, options ) {
     var errors = [],
         deps = parseDeps(module, oSettings),
         progress = {
-            total:  deps.count,
+            total: deps.count,
             loaded: 0
         };
 
@@ -213,13 +213,13 @@ $.extend(true, Loader, _Loader, {
             _Loader.remove(module);
             // if undefined - remove all loaded
             !module && (gloaded = {});
-         }
+        }
             
         return this;    
     },
     /**
-     * Execute closure with a module 
-     * @param {String} module
+     * Execute closure with a module or evaluate in global context 
+     * @param {string} module
      * @return {Function}
      */
     exec: function( fileName ) {

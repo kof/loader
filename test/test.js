@@ -105,7 +105,7 @@ loader.setup({
         css: 'themes/',
         img: 'themes/images/'
     },
-    timeout: 800
+    timeout: 400
 });
 
 // add dependencies
@@ -178,23 +178,6 @@ test('load one css file - external host (crossdomain)', function(){
             start();
         }
     });    
-});
-
-test('load one css file - test error callback', function(){
-    expect(3);
-    var url = 'file-not-exists.css';
-    loader({
-        css: url,
-        success: function( files, s ) {
-            ok(false, 'success callback is called');
-        },
-        error: function( file, message, s) {
-            ok(true, 'error callback is called');
-            ok(typeof message == 'string', 'error message is given');
-            ok(file === s.base + s.root.css + url, 'url is correct');
-            start();
-        }
-    });
 });
 
 test('load one image file', function(){
@@ -332,8 +315,6 @@ test('load ui.dialog, use callback', function(){
 
 
 
-
-
 (function(){
 
 var modules = [];
@@ -352,8 +333,7 @@ function callTest( i ) {
             var namespace = name.split('.').pop();
             //ok(typeof $.ui[namespace] != 'undefined', namespace +' is ' + typeof $.ui[namespace]);
             start();
-            i++;
-            callTest( i );
+            i+1<modules.length && callTest( ++i );    
         });
         
     });    

@@ -58,11 +58,14 @@ function Loader( options ) {
             // pending[url] is a callbacks array
             pending[file.url] = [complete];
             ++pending.__length;
-            var elem = self[file.type](file.url, updateStatus);
             
-            s.timeout && setTimeout(function(){
-                updateStatus.call(elem, file.url, 'error');
-            }, s.timeout);
+            if ( s.timeout ) {
+                pending[file.url].timeout = setTimeout(function(){
+                    updateStatus.call(elem, file.url, 'error');
+                }, s.timeout);
+            }
+            
+            var elem = self[file.type](file.url, updateStatus);
         }        
     }
     
@@ -127,9 +130,9 @@ Loader.prototype = {
         // except of mozilla by crossdomain requests  
         // https://bugzilla.mozilla.org/show_bug.cgi?id=346945
         if ( !$.browser.msie && !$.browser.opera ) {
-            function linkload(){
+            function linkload() {
                 try {
-                    var ruls = link.sheet.cssRules;
+                    var rules = link.sheet.cssRules;
                 } catch(e) {
                     return setTimeout(linkload, 50);
                 }
@@ -168,7 +171,7 @@ Loader.prototype = {
         // always add settings to the arguments array
         args.push(s);
         // dispatch callback
-        $.typeOf(s[type]) == 'function' && s[type].apply(s.context, args);
+        $.typeOf(s[type]) === 'function' && s[type].apply(s.context, args);
         return type;        
     },
     /**
@@ -219,11 +222,12 @@ function updateStatus( url, status ) {
         for( var i=0; i < pending[url].length; ++i) {
             pending[url][i].apply(this, arguments);    
         }
+        clearTimeout(pending[url].timeout);
         delete pending[url];
         --pending.__length;
     }
-    if ( status == 'success' && !gloaded[url] )
-        gloaded[url] = this;
+    
+    status === 'success' ? (gloaded[url] = this) : removeNode(this); 
 
     return url;    
 }
@@ -282,7 +286,7 @@ function haveToLoad( url, domCheck, type, complete ) {
     for (var i=0; i < types.length; ++i ) {
         if ( urls = obj[types[i]] ) {
             // multiple urls in one string
-            $.typeOf(urls) == 'string' && (urls = urls.split(separator));
+            $.typeOf(urls) === 'string' && (urls = urls.split(separator));
             for ( var k = 0; k < urls.length; ++k ) {
                 ret.push({url: urls[k], type: types[i]});
             }
@@ -298,6 +302,17 @@ function haveToLoad( url, domCheck, type, complete ) {
 function removeNode( elem ) {
    elem && elem.parentNode && elem.parentNode.removeChild(elem); 
 }
+
+/**
+ * 
+ * @param {string} url
+ */
+function removeLoaded( url ) {
+    removeNode(gloaded[url]);
+    delete gloaded[url];            
+}
+
+
 
 // public api
 $.extend(Loader, {
@@ -321,22 +336,17 @@ $.extend(Loader, {
     remove: function( name ) {
         // handle 3 cases - one url, array of urls or all loaded files
         var type = $.typeOf(name);
-        if ( type == 'string' ) {
-            remove(name);
-        } else if ( type == 'array' ) {
-            for (var i=0; i<name.length; ++i )
-                remove(name[i]);
+        if ( type === 'string' ) {
+            removeLoaded(name);
+        } else if ( type === 'array' ) {
+            for (var i = 0; i < name.length; ++i )
+                removeLoaded(name[i]);
         // remove all    
         } else {
             for ( var url in gloaded )
-                remove(url);               
+                removeLoaded(url);               
         }
         
-        function remove(url) {
-            removeNode(gloaded[url]);
-            delete gloaded[url];            
-        }
-
         return this;    
     },
     /**
@@ -350,11 +360,11 @@ $.extend(Loader, {
     loaded: function( name, value ) {
         var type = $.typeOf(name);
         // its a setter
-        if ( type == 'string' && value ) {
+        if ( type === 'string' && value ) {
             gloaded[name] = value;
             return this;  
         // it is also setter    
-        } else if (type == 'object' ) {
+        } else if (type === 'object' ) {
             $.extend(gloaded, name);
             return this;  
         // its a getter with specific name    
