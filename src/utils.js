@@ -38,13 +38,34 @@
         for ( var i = firstArg; i < args.length; ++i ) {
             for ( var key in args[i] ) {
                 // if deep extending and both of keys are objects
-                if ( deep === true && target[key] && $.typeOf(target[key]) === 'object' && $.typeOf(args[i][key]) === 'object' ) {
+                if ( deep === true && 
+                     target[key] && 
+                     $.typeOf(target[key]) === 'object' && 
+                     $.typeOf(args[i][key]) === 'object' &&
+                     // its not a window or node
+                     !args[i][key].nodeType && 
+                     !args[i][key].setInterval 
+                ) {
                     args.callee(deep, target[key], args[i][key]);    
                 } else
                     target[key] = args[i][key];
             }            
         }        
         return target;
+    };
+    
+    $.each = function( data, callback ) {
+        if ( $.typeOf(data) === 'object' ) {
+            for ( var key in data ) {
+                if ( callback(key, data[key]) === false )
+                    break;    
+            }
+        } else {
+            for ( var i=0; i<data.length; ++i ) {
+                if ( callback(i, data[i]) === false )
+                    break;    
+            }
+        }
     };
     
     $.typeOf = (function(){

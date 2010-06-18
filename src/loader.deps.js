@@ -2,7 +2,7 @@
  * Loader extension for dependencies management
  * 
  * @version 0.1 
- * @requires jquery.js, jquery.loader.js
+ * @requires utils.js loader.js
  * @license Dual licensed under the MIT and GPL licenses.
  * @author Oleg Slobodskoi aka Kof (http://jsui.de)
  */
@@ -12,9 +12,8 @@
     // all packages dependencies
 var dependencies = {},
     // reference to the original loader constructor
-    _Loader = global[namespace],
-    // original prototype
-    proto = _Loader.prototype,
+    Loader = global[namespace],
+    dispatch = Loader.prototype.dispatch,
     // all loaded files
     gloaded = {},
     // all registered modules
@@ -30,11 +29,11 @@ var dependencies = {},
  * @param {Function|Object} [options] function or options object
  * @return {Function}
  */
-function Loader( module, options ) {
+function loader( module, options ) {
     var fn = arguments.callee;
     // module is files object - use original loader
     if ( $.typeOf(module) !== 'string' ) {
-        new _Loader(module);    
+        new Loader(module);    
         return fn;        
     }
     
@@ -44,13 +43,13 @@ function Loader( module, options ) {
     $.typeOf(options) === 'function' && (options = {success: options});
         
         // merge original options with defaults if not already done
-    var oSettings = $.extend(true, {}, fn.defaults, options);         
-        
-        // failed dependencies
-    var errors = [],
+    var oSettings = $.extend(true, {}, fn.defaults, options),
+        context = {settings: oSettings},
         deps = parseDeps(module, oSettings),
+        // failed dependencies
+        errors = [],
         progress = {
-            total: deps.count,
+            total: deps.length,
             loaded: 0
         };
 
@@ -59,31 +58,31 @@ function Loader( module, options ) {
             // call or eval all modules synchron
             for ( var i = 0, url, parts; i < deps.js.length; ++i ) {
                 url = deps.js[i];
-                parts = $.regExp.file.exec( url );
-                fn.exec( parts ? parts[2] : url );
+                parts = $.regExp.file.exec(url);
+                fn.exec(parts ? parts[2] : url);
             }
         }        
         
         // all dependencies are loaded
         if ( progress.loaded + errors.length == progress.total ) {
-            !errors.length && proto.dispatch('success', [module, deps], oSettings);
-            proto.dispatch('complete', [module, deps, errors.length ? 'error' : 'success'], oSettings);
+            !errors.length && dispatch.call(context, 'success', module, deps);
+            dispatch.call(context, 'complete', module, deps, errors.length ? 'error' : 'success');
         }        
     }
     
     function onerror( url, message, s) {
         errors.push(url);
-        proto.dispatch('error', [url, message], oSettings);        
+        dispatch.call(context, 'error', url, message);        
     }             
     
     function onprogress( url, _progress, s ) {
         ++progress.loaded;
-        proto.dispatch('progress', [url, progress], oSettings);
+        dispatch.call(context, 'progress', url, progress);
     }
     
     // load js files separate from all other, because we can execute
     // after all dependencies are loaded, so no need to wait for other file types
-    new _Loader($.extend({}, oSettings, {
+    new Loader($.extend({}, oSettings, {
         success: null,
         start: null,
         css: null,
@@ -96,7 +95,7 @@ function Loader( module, options ) {
     }));
     
     // load css, img and text
-    new _Loader($.extend({}, oSettings, {
+    new Loader($.extend({}, oSettings, {
         success: null,
         start: null,
         js: null,
@@ -115,7 +114,7 @@ function Loader( module, options ) {
 function parseDeps( module, s, deps) {
     isModule(module);
     
-    deps  = deps || {count: 0, hash: {}};
+    deps  = deps || {length: 0, hash: {}};
     
     var i, files, type,
         m = dependencies[module];
@@ -142,7 +141,7 @@ function parseDeps( module, s, deps) {
                 if ( !deps.hash[file] ) {
                     deps[type].push( file );
                     deps.hash[file] = true;
-                    ++deps.count;    
+                    ++deps.length;    
                 }
             }
         }
@@ -169,10 +168,10 @@ function isModule( module ) {
  * @return {Array}
  */
 function split( items, separator ) {
-    return $.typeOf(items) === 'string' ? items.split( separator || Loader.defaults.separator ) : ( items || [] );
+    return $.typeOf(items) === 'string' ? items.split( separator || loader.defaults.separator ) : ( items || [] );
 }
 
-$.extend(true, Loader, _Loader, {
+$.extend(true, loader, Loader, {
     /**
      * Getter and setter for dependencies
      * @param {Object|undefined|string} deps
@@ -204,13 +203,13 @@ $.extend(true, Loader, _Loader, {
                         type == 'depends' && deep ? self.remove(items[i], true) : urls.push(items[i]);
                     }
                 });
-                _Loader.remove( urls );    
+                Loader.remove(urls);    
                 delete gloaded[module];
             }
         // it can ba an url, urls array or undefined
         } else {
             // its an url or urls array           
-            _Loader.remove(module);
+            Loader.remove(module);
             // if undefined - remove all loaded
             !module && (gloaded = {});
         }
@@ -244,7 +243,7 @@ $.extend(true, Loader, _Loader, {
 });
 
 // expose new loader function
-global[namespace] = Loader;
+global[namespace] = loader;
 
 
 /**

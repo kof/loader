@@ -1,17 +1,14 @@
 /**
  * Require and import js, css, images or text/templates
  * 
- * @todo 
- * - beim laden von packages module zum className hinzufügen
- * - import 
- * 
  * @version 0.1
+ * @requires utils.js
  * @license Dual licensed under the MIT and GPL licenses.
  * @author Oleg Slobodskoi aka Kof (http://jsui.de)
  */
-(function( global, document, $, namespace ) {
+(function( global, window, document, slice, $, namespace ) {
     
-var head = $('head')[0] || document.documentElement,
+var root = $('head')[0] || document.documentElement,
     // global loaded files
     gloaded = {},
     // pending requests
@@ -43,47 +40,43 @@ function Loader( options ) {
             loaded: 0    
         };
     
-    !s.context && (s.context = constr); 
-    
-    this.dispatch('start', [], s);
+    this.dispatch('start');
     
     // load all files asychron
-    for ( var i=0, file; i < files.length; ++i ) {
-        file = files[i];
+    $.each(files, function( i, file ){
         // only use base path if the url is not absolute
         if ( !$.regExp.url.test(file.url) )
             file.url = s.base + s.root[file.type] + file.url;                
 
-        if ( haveToLoad(file.url, s.domCheck, file.type, complete) ) {
+        if ( haveToLoad(file.url, s.domCheck, file.type, complete) ) { 
             // pending[url] is a callbacks array
             pending[file.url] = [complete];
             ++pending.__length;
-            
             if ( s.timeout ) {
                 pending[file.url].timeout = setTimeout(function(){
                     updateStatus.call(elem, file.url, 'error');
                 }, s.timeout);
             }
-            
+
             var elem = self[file.type](file.url, updateStatus);
-        }        
-    }
+        }
+    });
     
     // fire all callbacks
     function complete( url, status ) {
         if (status === 'success') {
             ++progress.loaded;
             loaded.push(url);
-            self.dispatch('progress', [url, progress], s);
+            self.dispatch('progress', url, progress);
             if (progress.loaded == progress.total) 
-                self.dispatch('success', [loaded], s);
+                self.dispatch('success', loaded);
         } else {
             errors.push(url);
-            self.dispatch('error', [url, 'Unable to load resources.'], s);
+            self.dispatch('error', url, 'Unable to load resources.');
         }
 
-        if (progress.loaded + errors.length == progress.total){
-            self.dispatch('complete', [loaded.concat(errors), errors.length ? 'error' : 'success'], s);
+        if ( progress.loaded + errors.length == progress.total ){
+            self.dispatch('complete', loaded.concat(errors), errors.length ? 'error' : 'success');
         }
     }   
 }  
@@ -103,7 +96,7 @@ Loader.prototype = {
         script.type = 'text/javascript';
         script.charset = this.settings.charset;
         this.addHandler(script, url, callback);
-        head.insertBefore(script, head.firstChild);
+        root.insertBefore(script, root.firstChild);
         return script;
     },
     /**
@@ -146,7 +139,7 @@ Loader.prototype = {
             $.browser.mozilla && remote ? onload.call(link) : linkload();
         }   
     
-        head.insertBefore(link, head.firstChild);
+        root.insertBefore(link, root.firstChild);
         return link;    
     },
     /**
@@ -166,12 +159,15 @@ Loader.prototype = {
      * @param {string} type
      * @param {Array} args
      * @param {Object} s
+     * @return {string} type
      */
-    dispatch: function( type, args, s ) {
+    dispatch: function( type /*, arg1, arg2, ... */ ) {
+        var s = this.settings,
+            args = slice.call(arguments, 1);
         // always add settings to the arguments array
         args.push(s);
         // dispatch callback
-        $.typeOf(s[type]) === 'function' && s[type].apply(s.context, args);
+        s[type] && s[type].apply(s.context, args);
         return type;        
     },
     /**
@@ -179,24 +175,22 @@ Loader.prototype = {
      * @param {Object} elem dom element
      * @param {string} url
      * @param {Function} callback
-     * @return {Function} onload handler
+     * @return {Function} onload
      */
     addHandler: function( elem, url, callback ) {
-        var done = false,
-            s = this.settings;
-        // onload handler
+        var done = false;
         function onload() {
-            if ( !done && (!this.readyState || this.readyState === "loaded" || this.readyState === "complete") ) {
+            if ( !done && (!elem.readyState || elem.readyState === "loaded" || elem.readyState === "complete") ) {
                 done = true;
                 // Handle memory leak in IE
-                elem.onload = elem.onreadystatechange = null;
+                elem.onload = elem.onreadystatechange = elem.onerror = null;
                 elem.nodeName === 'SCRIPT' && removeNode(elem);
-                callback && callback.call(this, url, 'success');
+                callback && callback.call(elem, url, 'success');
             }
         }
         // onerror handler
         function onerror(){
-            callback && callback.call(this, url, 'error');    
+            callback && callback.call(elem, url, 'error');    
         }
         // script tags - all
         // link tags - all except of mozilla if crossdomain
@@ -241,7 +235,6 @@ function updateStatus( url, status ) {
  * @return {boolean}
  */    
 function haveToLoad( url, domCheck, type, complete ) {
-    
     // file is already successfull loaded
     if ( gloaded[url] ) {
         updateStatus.call(gloaded[url], url, 'success');
@@ -253,7 +246,6 @@ function haveToLoad( url, domCheck, type, complete ) {
         return false;
     // if domCheck is enabled and type is js or css 
     } else if ( domCheck && (type === 'js' || type === 'css') ) {
-        
         // try to find link or script in the dom
         var attr = type === 'js' ? 'src' : 'href',
             tag = type === 'js' ? 'script' : 'link',
@@ -275,7 +267,7 @@ function haveToLoad( url, domCheck, type, complete ) {
 }
 
 /**
- * Push all urls from json to one flat array
+ * Push all urls from json to a flat array
  * @param {Object} obj
  * @param {Array} types
  * @param {String} separator
@@ -283,7 +275,7 @@ function haveToLoad( url, domCheck, type, complete ) {
  */   
  function toArray( obj, types, separator ) {
     var ret = [], urls;
-    for (var i=0; i < types.length; ++i ) {
+    for ( var i=0; i < types.length; ++i ) {
         if ( urls = obj[types[i]] ) {
             // multiple urls in one string
             $.typeOf(urls) === 'string' && (urls = urls.split(separator));
@@ -292,6 +284,7 @@ function haveToLoad( url, domCheck, type, complete ) {
             }
         }
     }
+    
     return ret;
 }
 
@@ -304,7 +297,7 @@ function removeNode( elem ) {
 }
 
 /**
- * 
+ * Remove loaded element and url from the hash 
  * @param {string} url
  */
 function removeLoaded( url ) {
@@ -389,13 +382,13 @@ $.extend(Loader, {
         // separator for files or modules lists, when used instead of array
         separator: ' ',
         // will be added to each link element
-        className: 'loader',
+        className: namespace,
         // if timeout and request is still in pending list, error callback will be called
         timeout: 1000,
         // check in the dom if the css or script is loaded
         domCheck: false,
         // context for callbacks
-        context: null,
+        context: window,
         'import': false,
         // callbacks
         start: null,
@@ -409,4 +402,4 @@ $.extend(Loader, {
 // provide public namespace
 global[namespace] = Loader;
 
-})(this, window.document, $, 'loader');
+})(this, window, window.document, Array.prototype.slice, $, 'loader');

@@ -108,6 +108,8 @@ loader.setup({
     timeout: 400
 });
 
+
+
 // add dependencies
 loader.deps( getModules() );
 
@@ -136,6 +138,7 @@ test('load one js file', function(){
         }
     });
 });
+
 
 test('load one js file - test error callback', function(){
     expect(3);
