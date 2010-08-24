@@ -7,12 +7,10 @@
  * @author Oleg Slobodskoi aka Kof (http://jsui.de)
  */
 
-(function( global, $, namespace ){
-    
-    // all packages dependencies
-var dependencies = {},
+var // all packages dependencies
+    dependencies = {},
     // reference to the original loader constructor
-    Loader = global[namespace],
+    Loader = global.loader,
     dispatch = Loader.prototype.dispatch,
     // all loaded files
     gloaded = {},
@@ -243,7 +241,7 @@ $.extend(true, loader, Loader, {
 });
 
 // expose new loader function
-global[namespace] = loader;
+global.loader = loader;
 
 
 /**
@@ -258,5 +256,3 @@ global.___registerLoaderModule___ = function registerModule( id, fn, globalEval 
     globalEval && (fn.globalEval = globalEval);
     registred[id] = fn;
 };
-
-})( this, $, 'loader' );

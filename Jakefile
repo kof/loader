@@ -1,0 +1,27 @@
+var sys = require('sys'),
+    fs = require('fs'),
+    src = './src/',
+    target = './lib/loader.js',
+    encoding = 'utf-8',
+    files = [
+        'intro.js',
+        'utils.js',
+        'loader.js',
+        'loader.deps.js',
+        'outro.js'
+    ];
+
+// merge all files to one
+task('default', [], function(){
+    sys.puts('doing build task ...');
+    
+    var data = '';
+    
+    files.forEach(function(file){
+        data += fs.readFileSync( src + file, encoding );
+    });
+    
+    fs.writeFileSync( target, data, encoding );
+    
+    sys.puts('built successfull');
+});

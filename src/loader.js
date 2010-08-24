@@ -6,9 +6,9 @@
  * @license Dual licensed under the MIT and GPL licenses.
  * @author Oleg Slobodskoi aka Kof (http://jsui.de)
  */
-(function( global, window, document, slice, $, namespace ) {
-    
+
 var root = $('head')[0] || document.documentElement,
+    slice = Array.prototype.slice,
     // global loaded files
     gloaded = {},
     // pending requests
@@ -44,9 +44,20 @@ function Loader( options ) {
     
     // load all files asychron
     $.each(files, function( i, file ){
+        
         // only use base path if the url is not absolute
-        if ( !$.regExp.url.test(file.url) )
+        if ( !$.regExp.url.test(file.url) ) {
             file.url = s.base + s.root[file.type] + file.url;                
+        }
+        
+        // add some query params
+        if ( s.query ) {
+            if ( file.url.charAt( file.url.length-1 ) !== '?' ) {
+                file.url += '?';
+            }
+
+            file.url += s.query;                 
+        }                
 
         if ( haveToLoad(file.url, s.domCheck, file.type, complete) ) { 
             // pending[url] is a callbacks array
@@ -139,7 +150,7 @@ Loader.prototype = {
             $.browser.mozilla && remote ? onload.call(link) : linkload();
         }   
     
-        root.insertBefore(link, root.firstChild);
+        root.appendChild(link);
         return link;    
     },
     /**
@@ -379,10 +390,12 @@ $.extend(Loader, {
         base: '',
         // root path for each file type, will be added to the base path
         root: {js: '', css: '', img: '', text: ''},
+        // add some query params to each url for e.g. cache key
+        query: null,
         // separator for files or modules lists, when used instead of array
         separator: ' ',
         // will be added to each link element
-        className: namespace,
+        className: 'loader',
         // if timeout and request is still in pending list, error callback will be called
         timeout: 1000,
         // check in the dom if the css or script is loaded
@@ -400,6 +413,4 @@ $.extend(Loader, {
 });
 
 // provide public namespace
-global[namespace] = Loader;
-
-})(this, window, window.document, Array.prototype.slice, $, 'loader');
+global.loader = Loader;
