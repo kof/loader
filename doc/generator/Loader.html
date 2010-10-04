@@ -1,0 +1,394 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: loader  loader   (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://github.com/kof/loader" title="loader">loader</a></h1>
+        <h3>loader&nbsp; <span class="subtitle">0.0.2</span></h3>
+        <a href="./index.html" title="loader">loader</a> 
+            &gt; <a href="./module_loader.html" title="loader">loader</a>
+                 &gt; loader 
+                
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <h2>
+                        
+
+                        
+                        
+                            Class <b property="yui:name">loader</b>
+                        <span class="extends">
+                        </span>
+
+                    </h2>
+                    <!-- class tree goes here -->
+                    
+                
+  
+
+                    <div class="summary description" property="yui:description">
+                        Load module described in dependencies json
+                    </div>
+
+                    
+                    <div rel="yui:properties" resource="#properties">
+
+                    </div>
+
+                    <div rel="yui:methods" resource="#methods">
+                        <div class="section method details">
+                            <h3 id="methods">Methods</h3>
+                            <div class="content">
+                                    <div class="" rel="yui:method" resource="#method____registerLoaderModule___">
+                                    <h4>
+                                        <a name="method____registerLoaderModule___">___registerLoaderModule___</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">___registerLoaderModule___</strong>
+                                           (
+                                                
+                                                        
+                                                         id
+                                                    
+                                                
+                                                        , 
+                                                         fn
+                                                    
+                                                
+                                                        , 
+                                                         globalEval
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            This is a second global namespace, I know,
+the purpose is to make the main loader namespace portable, 
+without to use jsonp (because using generated namespace will avoid caching)
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">id</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"></span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">fn</span>
+                                                        &lt;<span property="yui:type">Function</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"></span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">globalEval</span>
+                                                        &lt;<span property="yui:type">boolean</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> if true module will be converted toString and evaluated in the global context without module closure</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_deps">
+                                    <h4>
+                                        <a name="method_deps">deps</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        Object
+                                            <strong property="yui:name">deps</strong>
+                                           (
+                                                
+                                                        
+                                                         deps
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Getter and setter for dependencies
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">deps</span>
+                                                        &lt;<span property="yui:type">Object|undefined|string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"></span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_exec">
+                                    <h4>
+                                        <a name="method_exec">exec</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        Function
+                                            <strong property="yui:name">exec</strong>
+                                           (
+                                                
+                                                        
+                                                         module
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Execute closure with a module or evaluate in global context
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">module</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"></span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_isModule">
+                                    <h4>
+                                        <a name="method_isModule">isModule</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">isModule</strong>
+                                           (
+                                                
+                                                        
+                                                         module
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Check if the module is defined, else throw an error
+XXX throw an error or just call an error callback ?
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">module</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"></span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_remove">
+                                    <h4>
+                                        <a name="method_remove">remove</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        Function
+                                            <strong property="yui:name">remove</strong>
+                                           (
+                                                
+                                                        
+                                                         module
+                                                    
+                                                
+                                                        , 
+                                                         [deep]
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Remove loaded dependencies
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">module</span>
+                                                        &lt;<span property="yui:type">string|Object|undefined</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"></span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">[deep]</span>
+                                                        &lt;<span property="yui:type">boolean</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> destroy also dependencies and dependencies dependencies</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div rel="yui:events" resource="#events">
+
+
+                    </div>
+
+                    <div rel="yui:attributes" resource="#configattributes">
+
+                    </div>
+
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class="selected"><a href="module_loader.html" title="loader">loader</a></li>
+                                <li class=""><a href="module_loaderloader.html" title="loaderLoader">loaderLoader</a></li>
+                                <li class=""><a href="module_utils.html" title="utils">utils</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="Loader.html" title="Loader">Loader</a></li>
+                                <li class="selected"><a href="loader.html" title="loader">loader</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="loader.js.html" title="loader.js">loader.js</a></li>
+                                <li class=""><a href="loaderLoader.js.html" title="loaderLoader.js">loaderLoader.js</a></li>
+                        </ul>
+                    </div>
+
+
+                    <div id="methodsList" class="module">
+                        <h4>Methods</h4>
+                        <ul class="content">        
+                                <li class=""><a href="#method____registerLoaderModule___" title="___registerLoaderModule___">___registerLoaderModule___</a></li>
+                                <li class=""><a href="#method_deps" title="deps">deps</a></li>
+                                <li class=""><a href="#method_exec" title="exec">exec</a></li>
+                                <li class=""><a href="#method_isModule" title="isModule">isModule</a></li>
+                                <li class=""><a href="#method_remove" title="remove">remove</a></li>
+                        </ul>
+                    </div>
+
+
+
+            </div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+
+    var ALL_YUI_PROPS = [{"url": "Loader.html#method_addHandler", "access": "", "host": "Loader", "type": "method", "name": "addHandler"}, {"url": "Loader.html#method_css", "access": "", "host": "Loader", "type": "method", "name": "css"}, {"url": "loader.html#method_deps", "access": "", "host": "loader", "type": "method", "name": "deps"}, {"url": "Loader.html#method_dispatch", "access": "", "host": "Loader", "type": "method", "name": "dispatch"}, {"url": "loader.html#method_exec", "access": "", "host": "loader", "type": "method", "name": "exec"}, {"url": "Loader.html#method_img", "access": "", "host": "Loader", "type": "method", "name": "img"}, {"url": "loader.html#method_isModule", "access": "", "host": "loader", "type": "method", "name": "isModule"}, {"url": "Loader.html#method_js", "access": "", "host": "Loader", "type": "method", "name": "js"}, {"url": "Loader.html#method_loaded", "access": "", "host": "Loader", "type": "method", "name": "loaded"}, {"url": "loader.html#method____registerLoaderModule___", "access": "", "host": "loader", "type": "method", "name": "___registerLoaderModule___"}, {"url": "Loader.html#method_remove", "access": "", "host": "Loader", "type": "method", "name": "remove"}, {"url": "loader.html#method_remove", "access": "", "host": "loader", "type": "method", "name": "remove"}, {"url": "Loader.html#method_setup", "access": "", "host": "Loader", "type": "method", "name": "setup"}];
+</script>
+</body>
+</html>
