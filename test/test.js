@@ -114,9 +114,6 @@ loader.deps( getModules() );
 
 
 module('loader', {
-    setup: function() {
-        stop(1000);
-    },
     teardown: function() {
         deljQuery();
         // remove all loaded
@@ -124,8 +121,7 @@ module('loader', {
     }
 });
 
-test('load one js file', function(){
-    expect(2);
+asyncTest('load one js file', 2, function(){
     var url = 'jquery.js';
     loader({
         js: url,
@@ -138,8 +134,7 @@ test('load one js file', function(){
 });
 
 
-test('load one js file - test error callback', function(){
-    expect(3);
+asyncTest('load one js file - test error callback', 3, function(){
     var url = 'file-not-exists.js';
     loader({
         js: url,
@@ -156,8 +151,7 @@ test('load one js file - test error callback', function(){
 });
 
 
-test('load one css file - same host', function(){
-    expect(2);
+asyncTest('load one css file - same host', 2, function(){
     var url = 'jquery.ui.core.css';
     loader({
         css: url,
@@ -169,8 +163,7 @@ test('load one css file - same host', function(){
     });    
 });
 
-test('load one css file - external host (crossdomain)', function(){
-    expect(2);
+asyncTest('load one css file - external host (crossdomain)', 2, function(){
     loader({
         css: externalCss,
         success: function( files, s ) {
@@ -181,8 +174,7 @@ test('load one css file - external host (crossdomain)', function(){
     });    
 });
 
-test('load one image file', function(){
-    expect(2);
+asyncTest('load one image file', 2, function(){
     var url = 'ui-icons_cd0a0a_256x240.png';
     loader({
         img: url,
@@ -194,8 +186,7 @@ test('load one image file', function(){
     });    
 });
 
-test('load an image file - test error callback', function(){
-    expect(2);
+asyncTest('load an image file - test error callback', 2, function(){
     var url = 'no-name-image.png';
     loader({
         img: url,
@@ -207,8 +198,7 @@ test('load an image file - test error callback', function(){
     });
 });
 
-test('load 2 js files and test complete, progress and success callbacks', function(){
-    expect(9);
+asyncTest('load 2 js files and test complete, progress and success callbacks', 9, function(){
     var files = ['jquery.js', 'ui/jquery.ui.widget.js'],
         prg = {total: 2, loaded: 0};
     loader({
@@ -234,12 +224,13 @@ test('load 2 js files and test complete, progress and success callbacks', functi
     });
 });
 
-test('load 3 files (1 css, 1 js, 1 image) and test complete, progress and success callbacks', function() {
-   expect(9);
+asyncTest('load 3 files (1 css, 1 js, 1 image) and test complete, progress and success callbacks', 9, function() {
+
     var js = 'jquery.js',
         css = 'jquery.ui.core.css',
         img = 'ui-anim_basic_16x16.gif',
         prg = {total: 3, loaded: 0};
+
     loader({
         js: js,
         css: css,
@@ -262,17 +253,10 @@ test('load 3 files (1 css, 1 js, 1 image) and test complete, progress and succes
 });
 
 
-
-
-test('test domCheck option', function(){
-    expect(4);
-    var url = 'jquery.js',
-        script;
-
+asyncTest('test domCheck option', 3, function(){
     (function( document, url, callback ){
-        var head = document.getElementsByTagName('head')[0] || document.documentElement;
-        
-        script = document.createElement('script');
+        var head = document.getElementsByTagName('head')[0] || document.documentElement,
+            script = document.createElement('script');
         script.src = url;
         script.onload = script.onreadystatechange = function() {
             if ( script && (!this.readyState || /loaded|complete/.test(this.readyState) ) ) {
@@ -281,31 +265,27 @@ test('test domCheck option', function(){
             }
         };
         head.insertBefore(script, head.firstChild);
-    })( document, 'data/' + url, function(){
-        loader.exec(url);
-        ok(typeof jQuery == 'function', 'jQuery was loaded' );
-        deljQuery();
+    })( document, 'data/dom-check.js', function(){
+    
+        ok(window.domCheckTest === true, 'file is loaded' );
+        delete window.domCheckTest;
         
-        
-        
-        // loader should check, that jquery script is already loaded and don't load it again
         loader({
-            js: url,
+            js: 'dom-check.js',
             domCheck: true,
             success: function( urls, s ) {
                 ok(true, 'success callback called');
-                ok(urls[0] == s.base + s.root.js + url, 'urls is correct');
-                ok(typeof jQuery != 'function', 'jQuery was not loaded' );
+                ok(window.domCheckTest !== true, 'file was not double loaded' );
                 start();
             }
         });        
-
-
+    
     });
+
+
 });
 
-test('load ui.dialog, use callback', function(){
-    expect(2);
+asyncTest('load ui.dialog, use callback', 2, function(){
     loader('ui.dialog', function(module, deps, s){
         same('ui.dialog', module, 'module is correct');
         equal(typeof $.ui.dialog, 'function', '$.ui.dialog is object');
@@ -313,7 +293,6 @@ test('load ui.dialog, use callback', function(){
     });
     
 });
-
 
 
 (function(){
@@ -325,8 +304,7 @@ for ( var name in getModules() ) {
 
 function callTest( i ) {
     var name = modules[i];
-    test('load "' + name + '", use only success callback', function(){
-        //expect(4);
+    asyncTest('load "' + name + '", use only success callback', 2, function(){
         loader(name, function( module, s){
             ok(true, 'loaded');
             same(  module, name, 'loaded module name is correct');
