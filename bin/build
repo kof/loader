@@ -1,26 +1,60 @@
 #!/usr/bin/env node
 
-var sys = require('sys'),
-    fs = require('fs'),
-    src = './src/',
-    target = './lib/loader.js',
-    encoding = 'utf-8',
+var version = "0.0.2";
+
+
+var sys = require("sys"),
+    fs = require("fs"),
+    path = require("path"),
+    spawn = require("child_process").spawn;
+    
+    
+var root = path.normalize( __dirname + "/.." ),
+    src = path.join( root, "src" ),
+    target = path.join( root, "/lib/loader.js" ),
+    encoding = "utf-8",
     files = [
-        'intro.js',
-        'utils.js',
-        'loader.js',
-        'loader.deps.js',
-        'outro.js'
+        "/intro.js",
+        "/utils.js",
+        "/loader.js",
+        "/loader.deps.js",
+        "/outro.js"
     ];
 
-sys.puts('doing build task ...');
+sys.print("\nconcat files ...");
 
-var data = '';
-
+var data = "";
 files.forEach(function(file){
-    data += fs.readFileSync( src + file, encoding );
+    data += fs.readFileSync( src + file, encoding ).replace( "@VERSION", version );
 });
-
 fs.writeFileSync( target, data, encoding );
 
-sys.puts('built successfull');
+sys.print("\ngenereate documentation ...");
+
+
+var doc = root + "/doc",
+    yuidoc = root + "/deps/yuidoc",
+    errors,
+    child = spawn( yuidoc + "/bin/yuidoc.py", [
+        root + "/lib", 
+        "-p", doc + "/parser", 
+        "-o",  doc + "/generator", 
+        "-v", version, 
+        "-t", root + "/doc/template",
+        "-m", "loader",
+        "-u", "http://github.com/kof/loader" 
+    ]);
+
+child.stdout.on( "data", function( data ) {
+    sys.print( "\n" + data );
+});
+
+child.stderr.on( "data", function( data ) {
+    if ( /error/.test( data.toString().toLowerCase() ) ) {
+        errors +=  data;
+    }
+});
+
+child.on( "exit", function( data ) {
+    sys.print( errors ? "\n" + errors : "\nbuilt successfull\n\n" );
+});

@@ -1,16 +1,13 @@
 /**
  * Utils
  * Some of them borrowed by jQuery
+ * @module utils
  */
 var root = $('head')[0] || document.documentElement,
     slice = Array.prototype.slice, 
 	toString = Object.prototype.toString,
     timestamp = (new Date).getTime();
 
-/**
- * A very simple selector engine
- * @param {String} sel
- */      
 function $( selector, context ) {
     var pr = selector.substr(0, 1),
         ret;
@@ -28,6 +25,7 @@ function $( selector, context ) {
     }
     return ret;    
 }  
+
     
 $.extend = function( deep /*, obj, obj, ...*/ ) {
     // take first argument, if its not a boolean

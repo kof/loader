@@ -22,7 +22,7 @@ var // all packages dependencies
 
 /**
  * Load module described in dependencies json
- * @constructor
+ * @class loader
  * @param {string|Object} module
  * @param {Function|Object} [options] function or options object
  * @return {Function}
@@ -151,6 +151,7 @@ function parseDeps( module, s, deps) {
 /**
  * Check if the module is defined, else throw an error
  * XXX throw an error or just call an error callback ?
+ * @method isModule
  * @param {string} module
  */
 function isModule( module ) {

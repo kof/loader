@@ -1,3 +1,6 @@
 [submodule "deps/qunit"]
 	path = deps/qunit
 	url = http://github.com/jquery/qunit.git
+[submodule "deps/yuidoc"]
+	path = deps/yuidoc
+	url = http://github.com/yui/yuidoc.git

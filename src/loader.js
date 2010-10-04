@@ -1,12 +1,7 @@
 /**
- * Require and import js, css, images or text/templates
+ * @module loader
  * 
- * @version 0.1
- * @requires utils.js
- * @license Dual licensed under the MIT and GPL licenses.
- * @author Oleg Slobodskoi aka Kof (http://jsui.de)
  */
-
 var root = $('head')[0] || document.documentElement,
     slice = Array.prototype.slice,
     // global loaded files
@@ -17,7 +12,7 @@ var root = $('head')[0] || document.documentElement,
     
 /**
  * Load files 
- * @constructor
+ * @class Loader
  * @param {Object} options
  * @return {Function} loader
  */   
