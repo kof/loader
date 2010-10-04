@@ -109,7 +109,6 @@ loader.setup({
 });
 
 
-
 // add dependencies
 loader.deps( getModules() );
 
@@ -124,7 +123,6 @@ module('loader', {
         loader.remove();
     }
 });
-
 
 test('load one js file', function(){
     expect(2);
@@ -346,6 +344,23 @@ callTest(0);
 
 })();
 
+// issue #2
+asyncTest('load a file and then load the same again', 2, function(){
+
+    loader({
+        js: "jquery.js",
+        complete: function( files, s ) {
+            ok(true, 'first callback');
+            loader({
+                js: "jquery.js",
+                success: function( files, s ) {
+                    ok(true, 'seccond callback');
+                    start();
+                }
+            });
+        }
+    }); 
+});
 
 
 /**/

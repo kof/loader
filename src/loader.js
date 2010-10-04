@@ -362,21 +362,21 @@ $.extend(Loader, {
      * @return {Function|Object}
      */
     loaded: function( name, value ) {
-        var type = $.typeOf(name);
+        // its a getter
+        if ( !value ) {
+            return name ? gloaded[name] : gloaded;
+        }
+        
         // its a setter
-        if ( type === 'string' && value ) {
-            gloaded[name] = value;
+        if ( name && value ) {
+            var type = $.typeOf(name);
+            if ( type === 'string' ) {
+                gloaded[name] = value;
+            } else if ( type === 'object' ) {
+                $.extend(gloaded, name);    
+            }                
             return this;  
-        // it is also setter    
-        } else if (type === 'object' ) {
-            $.extend(gloaded, name);
-            return this;  
-        // its a getter with specific name    
-        } else if ( type && !value ) {
-            return gloaded[name];
-        // get all loaded files urls
-        } else
-            return gloaded;
+        }
     },
     // default settings
     defaults: {
