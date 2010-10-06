@@ -13,8 +13,8 @@ var root = $('head')[0] || document.documentElement,
 /**
  * Load files 
  * @class Loader
- * @param {Object} options
- * @return {Function} loader
+ * @param {object} options
+ * @return {function} loader
  */   
 function Loader( options ) {
     var constr = arguments.callee;
@@ -92,9 +92,11 @@ function Loader( options ) {
 Loader.prototype = {
     /**
      * Load script
+     * @method js
      * @param {string} url
-     * @param {Function} callback
-     * @return {Object}
+     * @param {function} callback
+     * @return {object}
+     * @private
      */     
     js: function( url, callback ) {
         var script = document.createElement('script');
@@ -107,9 +109,12 @@ Loader.prototype = {
     },
     /**
      * Load stylesheet
+     * 
+     * @metod css
      * @param {string} url
-     * @param {Function} callback
-     * @return {Object} link
+     * @param {function} callback
+     * @return {object} link
+     * @private
      */    
     css: function( url, callback ) {
         var link = document.createElement('link');
@@ -150,9 +155,11 @@ Loader.prototype = {
     },
     /**
      * Load image
+     * @method css
      * @param {string} url
-     * @param {Function} callback
-     * @return {Object} img
+     * @param {function} callback
+     * @return {object} img
+     * @private
      */
     img: function( url, callback ) {
         var image = new Image;
@@ -162,10 +169,12 @@ Loader.prototype = {
     },
     /**
      * Dispatch callbacks
+     * @method dispatch
      * @param {string} type
-     * @param {Array} args
-     * @param {Object} s
+     * @param {array} args
+     * @param {object} s
      * @return {string} type
+     * @private
      */
     dispatch: function( type /*, arg1, arg2, ... */ ) {
         var s = this.settings,
@@ -178,10 +187,12 @@ Loader.prototype = {
     },
     /**
      * Attach onload and onerror handler
-     * @param {Object} elem dom element
+     * @method addHandler
+     * @param {object} elem dom element
      * @param {string} url
-     * @param {Function} callback
-     * @return {Function} onload
+     * @param {function} callback
+     * @return {function} onload
+     * @private
      */
     addHandler: function( elem, url, callback ) {
         var done = false;
@@ -216,6 +227,7 @@ Loader.prototype = {
  * and mark loaded urls, this has always element context 
  * @param {string} url
  * @param {string} status
+ * @private
  */
 function updateStatus( url, status ) {
     if ( pending[url] ) {
@@ -239,6 +251,7 @@ function updateStatus( url, status ) {
  * @param {boolean} domCheck
  * @param {string} type
  * @return {boolean}
+ * @private
  */    
 function haveToLoad( url, domCheck, type, complete ) {
     // file is already successfull loaded
@@ -274,10 +287,11 @@ function haveToLoad( url, domCheck, type, complete ) {
 
 /**
  * Push all urls from json to a flat array
- * @param {Object} obj
- * @param {Array} types
- * @param {String} separator
- * @return {Array} ret
+ * @param {object} obj
+ * @param {array} types
+ * @param {string} separator
+ * @return {array} ret
+ * @private
  */   
  function toArray( obj, types, separator ) {
     var ret = [], urls;
@@ -296,7 +310,8 @@ function haveToLoad( url, domCheck, type, complete ) {
 
 /**
  * Remove dom element
- * @param {Object} elem dom node
+ * @param {object} elem dom node
+ * @private
  */
 function removeNode( elem ) {
    elem && elem.parentNode && elem.parentNode.removeChild(elem); 
@@ -305,6 +320,7 @@ function removeNode( elem ) {
 /**
  * Remove loaded element and url from the hash 
  * @param {string} url
+ * @private
  */
 function removeLoaded( url ) {
     removeNode(gloaded[url]);
@@ -317,8 +333,9 @@ function removeLoaded( url ) {
 $.extend(Loader, {
     /**
      * Getter and setter for defaults
-     * @param {Object|undefined} defaults
-     * @return {Object|Function}
+     * @method setup
+     * @param {object|undefined} defaults
+     * @return {object|function}
      */
     setup: function( defaults ) {
         if ( defaults ) {
@@ -329,8 +346,9 @@ $.extend(Loader, {
     },
     /**
      * Remove loaded - clean dom and gloaded object
-     * @param {string|Array|undefined} name
-     * @return {Function}
+     * @method remove
+     * @param {string|array|undefined} name
+     * @return {function}
      */
     remove: function( name ) {
         // handle 3 cases - one url, array of urls or all loaded files
@@ -352,9 +370,10 @@ $.extend(Loader, {
      * Getter and setter for global loaded files object to avoid double loading.
      * Can be used if you have already loaded some files before not using loader,
      * and there is no dom element contained such url or you want to avoid domCheck
-     * @param {string|Object|undefined} name
-     * @param {string|Object} value
-     * @return {Function|Object}
+     * @method loaded
+     * @param {string|object|undefined} name
+     * @param {string|object} value
+     * @return {function|object}
      */
     loaded: function( name, value ) {
         // its a getter

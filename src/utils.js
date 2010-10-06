@@ -1,7 +1,6 @@
-/**
+/*!
  * Utils
  * Some of them borrowed by jQuery
- * @module utils
  */
 var root = $('head')[0] || document.documentElement,
     slice = Array.prototype.slice, 

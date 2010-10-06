@@ -1,4 +1,4 @@
-YAHOO.env.classMap = {"loader": "loader", "$": "utils", "Loader": "loader"};
+YAHOO.env.classMap = {"Loader": "loader"};
 
 YAHOO.env.resolveClass = function(className) {
     var a=className.split('.'), ns=YAHOO.env.classMap;

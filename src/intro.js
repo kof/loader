@@ -1,5 +1,5 @@
 /**
- * Load javascript, css, images or text/templates
+ * Load sync or async javascript, css, images files.
  * 
  * @module loader
  * @version @VERSION

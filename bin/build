@@ -17,7 +17,8 @@ var root = path.normalize( __dirname + "/.." ),
         "/intro.js",
         "/utils.js",
         "/loader.js",
-        "/loader.deps.js",
+        "/loader-deps.js",
+        "/loader-reg.js",
         "/outro.js"
     ];
 

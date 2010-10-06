@@ -1,5 +1,5 @@
 <div class="highlight"><pre><span class="cm">/**</span>
-<span class="cm"> * Load javascript, css, images or text/templates</span>
+<span class="cm"> * Load sync or async javascript, css, images files.</span>
 <span class="cm"> * </span>
 <span class="cm"> * @module loader</span>
 <span class="cm"> * @version 0.0.2</span>
@@ -8,22 +8,15 @@
 <span class="cm"> */</span>
 
 <span class="p">;(</span><span class="kd">function</span><span class="p">(</span> <span class="nx">global</span><span class="p">,</span> <span class="nb">window</span><span class="p">,</span> <span class="nb">document</span><span class="p">,</span> <span class="kc">undefined</span> <span class="p">){</span>
-<span class="cm">/**</span>
+<span class="cm">/*!</span>
 <span class="cm"> * Utils</span>
 <span class="cm"> * Some of them borrowed by jQuery</span>
-<span class="cm"> * @module utils</span>
 <span class="cm"> */</span>
 <span class="kd">var</span> <span class="nx">root</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;head&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">||</span> <span class="nb">document</span><span class="p">.</span><span class="nx">documentElement</span><span class="p">,</span>
     <span class="nx">slice</span> <span class="o">=</span> <span class="nb">Array</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">slice</span><span class="p">,</span> 
 	<span class="nx">toString</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toString</span><span class="p">,</span>
     <span class="nx">timestamp</span> <span class="o">=</span> <span class="p">(</span><span class="k">new</span> <span class="nb">Date</span><span class="p">).</span><span class="nx">getTime</span><span class="p">();</span>
 
-<span class="cm">/**</span>
-<span class="cm"> * A very simple selector engine</span>
-<span class="cm"> * @class $</span>
-<span class="cm"> * @method $</span>
-<span class="cm"> * @param {String} sel</span>
-<span class="cm"> */</span>      
 <span class="kd">function</span> <span class="nx">$</span><span class="p">(</span> <span class="nx">selector</span><span class="p">,</span> <span class="nx">context</span> <span class="p">)</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">pr</span> <span class="o">=</span> <span class="nx">selector</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
         <span class="nx">ret</span><span class="p">;</span>
@@ -41,6 +34,7 @@
     <span class="p">}</span>
     <span class="k">return</span> <span class="nx">ret</span><span class="p">;</span>    
 <span class="p">}</span>  
+
     
 <span class="nx">$</span><span class="p">.</span><span class="nx">extend</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span> <span class="nx">deep</span> <span class="cm">/*, obj, obj, ...*/</span> <span class="p">)</span> <span class="p">{</span>
     <span class="c1">// take first argument, if its not a boolean</span>
@@ -177,6 +171,7 @@
     <span class="p">}</span>
 <span class="p">};</span><span class="cm">/**</span>
 <span class="cm"> * @module loader</span>
+<span class="cm"> * </span>
 <span class="cm"> */</span>
 <span class="kd">var</span> <span class="nx">root</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;head&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">||</span> <span class="nb">document</span><span class="p">.</span><span class="nx">documentElement</span><span class="p">,</span>
     <span class="nx">slice</span> <span class="o">=</span> <span class="nb">Array</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">slice</span><span class="p">,</span>
@@ -189,9 +184,8 @@
 <span class="cm">/**</span>
 <span class="cm"> * Load files </span>
 <span class="cm"> * @class Loader</span>
-<span class="cm"> * @constructor</span>
-<span class="cm"> * @param {Object} options</span>
-<span class="cm"> * @return {Function} loader</span>
+<span class="cm"> * @param {object} options</span>
+<span class="cm"> * @return {function} loader</span>
 <span class="cm"> */</span>   
 <span class="kd">function</span> <span class="nx">Loader</span><span class="p">(</span> <span class="nx">options</span> <span class="p">)</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">constr</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">.</span><span class="nx">callee</span><span class="p">;</span>
@@ -269,9 +263,11 @@
 <span class="nx">Loader</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="p">{</span>
     <span class="cm">/**</span>
 <span class="cm">     * Load script</span>
+<span class="cm">     * @method js</span>
 <span class="cm">     * @param {string} url</span>
-<span class="cm">     * @param {Function} callback</span>
-<span class="cm">     * @return {Object}</span>
+<span class="cm">     * @param {function} callback</span>
+<span class="cm">     * @return {object}</span>
+<span class="cm">     * @private</span>
 <span class="cm">     */</span>     
     <span class="nx">js</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span> <span class="nx">url</span><span class="p">,</span> <span class="nx">callback</span> <span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">script</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;script&#39;</span><span class="p">);</span>
@@ -284,9 +280,12 @@
     <span class="p">},</span>
     <span class="cm">/**</span>
 <span class="cm">     * Load stylesheet</span>
+<span class="cm">     * </span>
+<span class="cm">     * @metod css</span>
 <span class="cm">     * @param {string} url</span>
-<span class="cm">     * @param {Function} callback</span>
-<span class="cm">     * @return {Object} link</span>
+<span class="cm">     * @param {function} callback</span>
+<span class="cm">     * @return {object} link</span>
+<span class="cm">     * @private</span>
 <span class="cm">     */</span>    
     <span class="nx">css</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span> <span class="nx">url</span><span class="p">,</span> <span class="nx">callback</span> <span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">link</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;link&#39;</span><span class="p">);</span>
@@ -327,9 +326,11 @@
     <span class="p">},</span>
     <span class="cm">/**</span>
 <span class="cm">     * Load image</span>
+<span class="cm">     * @method css</span>
 <span class="cm">     * @param {string} url</span>
-<span class="cm">     * @param {Function} callback</span>
-<span class="cm">     * @return {Object} img</span>
+<span class="cm">     * @param {function} callback</span>
+<span class="cm">     * @return {object} img</span>
+<span class="cm">     * @private</span>
 <span class="cm">     */</span>
     <span class="nx">img</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span> <span class="nx">url</span><span class="p">,</span> <span class="nx">callback</span> <span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">image</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Image</span><span class="p">;</span>
@@ -339,10 +340,12 @@
     <span class="p">},</span>
     <span class="cm">/**</span>
 <span class="cm">     * Dispatch callbacks</span>
+<span class="cm">     * @method dispatch</span>
 <span class="cm">     * @param {string} type</span>
-<span class="cm">     * @param {Array} args</span>
-<span class="cm">     * @param {Object} s</span>
+<span class="cm">     * @param {array} args</span>
+<span class="cm">     * @param {object} s</span>
 <span class="cm">     * @return {string} type</span>
+<span class="cm">     * @private</span>
 <span class="cm">     */</span>
     <span class="nx">dispatch</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span> <span class="nx">type</span> <span class="cm">/*, arg1, arg2, ... */</span> <span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">s</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">settings</span><span class="p">,</span>
@@ -355,10 +358,12 @@
     <span class="p">},</span>
     <span class="cm">/**</span>
 <span class="cm">     * Attach onload and onerror handler</span>
-<span class="cm">     * @param {Object} elem dom element</span>
+<span class="cm">     * @method addHandler</span>
+<span class="cm">     * @param {object} elem dom element</span>
 <span class="cm">     * @param {string} url</span>
-<span class="cm">     * @param {Function} callback</span>
-<span class="cm">     * @return {Function} onload</span>
+<span class="cm">     * @param {function} callback</span>
+<span class="cm">     * @return {function} onload</span>
+<span class="cm">     * @private</span>
 <span class="cm">     */</span>
     <span class="nx">addHandler</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span> <span class="nx">elem</span><span class="p">,</span> <span class="nx">url</span><span class="p">,</span> <span class="nx">callback</span> <span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">done</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
@@ -393,6 +398,7 @@
 <span class="cm"> * and mark loaded urls, this has always element context </span>
 <span class="cm"> * @param {string} url</span>
 <span class="cm"> * @param {string} status</span>
+<span class="cm"> * @private</span>
 <span class="cm"> */</span>
 <span class="kd">function</span> <span class="nx">updateStatus</span><span class="p">(</span> <span class="nx">url</span><span class="p">,</span> <span class="nx">status</span> <span class="p">)</span> <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span> <span class="nx">pending</span><span class="p">[</span><span class="nx">url</span><span class="p">]</span> <span class="p">)</span> <span class="p">{</span>
@@ -416,6 +422,7 @@
 <span class="cm"> * @param {boolean} domCheck</span>
 <span class="cm"> * @param {string} type</span>
 <span class="cm"> * @return {boolean}</span>
+<span class="cm"> * @private</span>
 <span class="cm"> */</span>    
 <span class="kd">function</span> <span class="nx">haveToLoad</span><span class="p">(</span> <span class="nx">url</span><span class="p">,</span> <span class="nx">domCheck</span><span class="p">,</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">complete</span> <span class="p">)</span> <span class="p">{</span>
     <span class="c1">// file is already successfull loaded</span>
@@ -451,10 +458,11 @@
 
 <span class="cm">/**</span>
 <span class="cm"> * Push all urls from json to a flat array</span>
-<span class="cm"> * @param {Object} obj</span>
-<span class="cm"> * @param {Array} types</span>
-<span class="cm"> * @param {String} separator</span>
-<span class="cm"> * @return {Array} ret</span>
+<span class="cm"> * @param {object} obj</span>
+<span class="cm"> * @param {array} types</span>
+<span class="cm"> * @param {string} separator</span>
+<span class="cm"> * @return {array} ret</span>
+<span class="cm"> * @private</span>
 <span class="cm"> */</span>   
  <span class="kd">function</span> <span class="nx">toArray</span><span class="p">(</span> <span class="nx">obj</span><span class="p">,</span> <span class="nx">types</span><span class="p">,</span> <span class="nx">separator</span> <span class="p">)</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">ret</span> <span class="o">=</span> <span class="p">[],</span> <span class="nx">urls</span><span class="p">;</span>
@@ -473,7 +481,8 @@
 
 <span class="cm">/**</span>
 <span class="cm"> * Remove dom element</span>
-<span class="cm"> * @param {Object} elem dom node</span>
+<span class="cm"> * @param {object} elem dom node</span>
+<span class="cm"> * @private</span>
 <span class="cm"> */</span>
 <span class="kd">function</span> <span class="nx">removeNode</span><span class="p">(</span> <span class="nx">elem</span> <span class="p">)</span> <span class="p">{</span>
    <span class="nx">elem</span> <span class="o">&amp;&amp;</span> <span class="nx">elem</span><span class="p">.</span><span class="nx">parentNode</span> <span class="o">&amp;&amp;</span> <span class="nx">elem</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">.</span><span class="nx">removeChild</span><span class="p">(</span><span class="nx">elem</span><span class="p">);</span> 
@@ -482,6 +491,7 @@
 <span class="cm">/**</span>
 <span class="cm"> * Remove loaded element and url from the hash </span>
 <span class="cm"> * @param {string} url</span>
+<span class="cm"> * @private</span>
 <span class="cm"> */</span>
 <span class="kd">function</span> <span class="nx">removeLoaded</span><span class="p">(</span> <span class="nx">url</span> <span class="p">)</span> <span class="p">{</span>
     <span class="nx">removeNode</span><span class="p">(</span><span class="nx">gloaded</span><span class="p">[</span><span class="nx">url</span><span class="p">]);</span>
@@ -494,8 +504,9 @@
 <span class="nx">$</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">Loader</span><span class="p">,</span> <span class="p">{</span>
     <span class="cm">/**</span>
 <span class="cm">     * Getter and setter for defaults</span>
-<span class="cm">     * @param {Object|undefined} defaults</span>
-<span class="cm">     * @return {Object|Function}</span>
+<span class="cm">     * @method setup</span>
+<span class="cm">     * @param {object|undefined} defaults</span>
+<span class="cm">     * @return {object|function}</span>
 <span class="cm">     */</span>
     <span class="nx">setup</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span> <span class="nx">defaults</span> <span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span> <span class="nx">defaults</span> <span class="p">)</span> <span class="p">{</span>
@@ -506,8 +517,9 @@
     <span class="p">},</span>
     <span class="cm">/**</span>
 <span class="cm">     * Remove loaded - clean dom and gloaded object</span>
-<span class="cm">     * @param {string|Array|undefined} name</span>
-<span class="cm">     * @return {Function}</span>
+<span class="cm">     * @method remove</span>
+<span class="cm">     * @param {string|array|undefined} name</span>
+<span class="cm">     * @return {function}</span>
 <span class="cm">     */</span>
     <span class="nx">remove</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span> <span class="nx">name</span> <span class="p">)</span> <span class="p">{</span>
         <span class="c1">// handle 3 cases - one url, array of urls or all loaded files</span>
@@ -529,9 +541,10 @@
 <span class="cm">     * Getter and setter for global loaded files object to avoid double loading.</span>
 <span class="cm">     * Can be used if you have already loaded some files before not using loader,</span>
 <span class="cm">     * and there is no dom element contained such url or you want to avoid domCheck</span>
-<span class="cm">     * @param {string|Object|undefined} name</span>
-<span class="cm">     * @param {string|Object} value</span>
-<span class="cm">     * @return {Function|Object}</span>
+<span class="cm">     * @method loaded</span>
+<span class="cm">     * @param {string|object|undefined} name</span>
+<span class="cm">     * @param {string|object} value</span>
+<span class="cm">     * @return {function|object}</span>
 <span class="cm">     */</span>
     <span class="nx">loaded</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">value</span> <span class="p">)</span> <span class="p">{</span>
         <span class="c1">// its a getter</span>
@@ -587,11 +600,6 @@
 <span class="c1">// provide public namespace</span>
 <span class="nx">global</span><span class="p">.</span><span class="nx">loader</span> <span class="o">=</span> <span class="nx">Loader</span><span class="p">;</span><span class="cm">/**</span>
 <span class="cm"> * Loader extension for dependencies management</span>
-<span class="cm"> * </span>
-<span class="cm"> * @version 0.1 </span>
-<span class="cm"> * @requires utils.js loader.js</span>
-<span class="cm"> * @license Dual licensed under the MIT and GPL licenses.</span>
-<span class="cm"> * @author Oleg Slobodskoi aka Kof (http://jsui.de)</span>
 <span class="cm"> */</span>
 
 <span class="kd">var</span> <span class="c1">// all packages dependencies</span>
@@ -609,10 +617,9 @@
 
 <span class="cm">/**</span>
 <span class="cm"> * Load module described in dependencies json</span>
-<span class="cm"> * @class loader</span>
-<span class="cm"> * @param {string|Object} module</span>
-<span class="cm"> * @param {Function|Object} [options] function or options object</span>
-<span class="cm"> * @return {Function}</span>
+<span class="cm"> * @param {string|object} module</span>
+<span class="cm"> * @param {function|object} [options] function or options object</span>
+<span class="cm"> * @return {function}</span>
 <span class="cm"> */</span>
 <span class="kd">function</span> <span class="nx">loader</span><span class="p">(</span> <span class="nx">module</span><span class="p">,</span> <span class="nx">options</span> <span class="p">)</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">fn</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">.</span><span class="nx">callee</span><span class="p">;</span>
@@ -740,6 +747,7 @@
 <span class="cm"> * XXX throw an error or just call an error callback ?</span>
 <span class="cm"> * @method isModule</span>
 <span class="cm"> * @param {string} module</span>
+<span class="cm"> * @private</span>
 <span class="cm"> */</span>
 <span class="kd">function</span> <span class="nx">isModule</span><span class="p">(</span> <span class="nx">module</span> <span class="p">)</span> <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span> <span class="o">!</span><span class="nx">dependencies</span><span class="p">[</span><span class="nx">module</span><span class="p">]</span> <span class="p">)</span> 
@@ -749,19 +757,21 @@
 
 <span class="cm">/**</span>
 <span class="cm"> * Convert string with char separated items to array</span>
-<span class="cm"> * @param {string|Array|undefined} items</span>
+<span class="cm"> * @param {string|array|undefined} items</span>
 <span class="cm"> * @param {string} [separator]</span>
-<span class="cm"> * @return {Array}</span>
+<span class="cm"> * @return {array}</span>
+<span class="cm"> * @private</span>
 <span class="cm"> */</span>
 <span class="kd">function</span> <span class="nx">split</span><span class="p">(</span> <span class="nx">items</span><span class="p">,</span> <span class="nx">separator</span> <span class="p">)</span> <span class="p">{</span>
     <span class="k">return</span> <span class="nx">$</span><span class="p">.</span><span class="nx">typeOf</span><span class="p">(</span><span class="nx">items</span><span class="p">)</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span> <span class="o">?</span> <span class="nx">items</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span> <span class="nx">separator</span> <span class="o">||</span> <span class="nx">loader</span><span class="p">.</span><span class="nx">defaults</span><span class="p">.</span><span class="nx">separator</span> <span class="p">)</span> <span class="o">:</span> <span class="p">(</span> <span class="nx">items</span> <span class="o">||</span> <span class="p">[]</span> <span class="p">);</span>
 <span class="p">}</span>
 
-<span class="nx">$</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="kc">true</span><span class="p">,</span> <span class="nx">loader</span><span class="p">,</span> <span class="nx">Loader</span><span class="p">,</span> <span class="p">{</span>
+<span class="nx">$</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">loader</span><span class="p">,</span> <span class="nx">Loader</span><span class="p">,</span> <span class="p">{</span>
     <span class="cm">/**</span>
 <span class="cm">     * Getter and setter for dependencies</span>
-<span class="cm">     * @param {Object|undefined|string} deps</span>
-<span class="cm">     * @return {Object}</span>
+<span class="cm">     * @method deps</span>
+<span class="cm">     * @param {object|undefined|string} deps</span>
+<span class="cm">     * @return {object}</span>
 <span class="cm">     */</span>
     <span class="nx">deps</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span> <span class="nx">deps</span> <span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span> <span class="nx">deps</span> <span class="p">)</span> <span class="p">{</span>
@@ -772,9 +782,10 @@
     <span class="p">},</span>
     <span class="cm">/**</span>
 <span class="cm">     * Remove loaded dependencies</span>
-<span class="cm">     * @param {string|Object|undefined} module</span>
-<span class="cm">     * @param {boolean} [deep] destroy also dependencies and dependencies dependencies</span>
-<span class="cm">     * @return {Function}</span>
+<span class="cm">     * @method remove</span>
+<span class="cm">     * @param {string|object|undefined} module</span>
+<span class="cm">     * @param {boolean} deep destroy also dependencies and dependencies dependencies</span>
+<span class="cm">     * @return {function}</span>
 <span class="cm">     */</span>
     <span class="nx">remove</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span> <span class="nx">module</span><span class="p">,</span> <span class="nx">deep</span> <span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
@@ -803,9 +814,10 @@
         <span class="k">return</span> <span class="k">this</span><span class="p">;</span>    
     <span class="p">},</span>
     <span class="cm">/**</span>
-<span class="cm">     * Execute closure with a module or evaluate in global context </span>
-<span class="cm">     * @param {string} module</span>
-<span class="cm">     * @return {Function}</span>
+<span class="cm">     * Execute closure with a module or evaluate in global context</span>
+<span class="cm">     * @method exec </span>
+<span class="cm">     * @param {string} fileName</span>
+<span class="cm">     * @return {function}</span>
 <span class="cm">     */</span>
     <span class="nx">exec</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span> <span class="nx">fileName</span> <span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span> <span class="o">!</span><span class="nx">registred</span><span class="p">[</span><span class="nx">fileName</span><span class="p">]</span> <span class="p">)</span> <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
@@ -830,14 +842,13 @@
 
 <span class="c1">// expose new loader function</span>
 <span class="nx">global</span><span class="p">.</span><span class="nx">loader</span> <span class="o">=</span> <span class="nx">loader</span><span class="p">;</span>
-
-
 <span class="cm">/**</span>
 <span class="cm"> * This is a second global namespace, I know,</span>
 <span class="cm"> * the purpose is to make the main loader namespace portable, </span>
 <span class="cm"> * without to use jsonp (because using generated namespace will avoid caching)</span>
+<span class="cm"> * @module registerModule</span>
 <span class="cm"> * @param {string} id</span>
-<span class="cm"> * @param {Function} fn</span>
+<span class="cm"> * @param {function} fn</span>
 <span class="cm"> * @param {boolean} globalEval if true module will be converted toString and evaluated in the global context without module closure</span>
 <span class="cm"> */</span>
 <span class="nx">global</span><span class="p">.</span><span class="nx">___registerLoaderModule___</span> <span class="o">=</span> <span class="kd">function</span> <span class="nx">registerModule</span><span class="p">(</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">globalEval</span> <span class="p">)</span> <span class="p">{</span>

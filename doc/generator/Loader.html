@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: loader  loader   (YUI Library)</title>
+	<title>API: loader  Loader   (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -19,7 +19,7 @@
         <h3>loader&nbsp; <span class="subtitle">0.0.2</span></h3>
         <a href="./index.html" title="loader">loader</a> 
             &gt; <a href="./module_loader.html" title="loader">loader</a>
-                 &gt; loader 
+                 &gt; Loader 
                 
         <form onsubmit="return false">
             <div id="propertysearch">
@@ -48,7 +48,7 @@
 
                         
                         
-                            Class <b property="yui:name">loader</b>
+                            Class <b property="yui:name">Loader</b>
                         <span class="extends">
                         </span>
 
@@ -59,7 +59,7 @@
   
 
                     <div class="summary description" property="yui:description">
-                        Load module described in dependencies json
+                        Load files
                     </div>
 
                     
@@ -71,72 +71,6 @@
                         <div class="section method details">
                             <h3 id="methods">Methods</h3>
                             <div class="content">
-                                    <div class="" rel="yui:method" resource="#method____registerLoaderModule___">
-                                    <h4>
-                                        <a name="method____registerLoaderModule___">___registerLoaderModule___</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                        
-                                        
-                                        void
-                                            <strong property="yui:name">___registerLoaderModule___</strong>
-                                           (
-                                                
-                                                        
-                                                         id
-                                                    
-                                                
-                                                        , 
-                                                         fn
-                                                    
-                                                
-                                                        , 
-                                                         globalEval
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            This is a second global namespace, I know,
-the purpose is to make the main loader namespace portable, 
-without to use jsonp (because using generated namespace will avoid caching)
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">id</span>
-                                                        &lt;<span property="yui:type">string</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"></span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">fn</span>
-                                                        &lt;<span property="yui:type">Function</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"></span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">globalEval</span>
-                                                        &lt;<span property="yui:type">boolean</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> if true module will be converted toString and evaluated in the global context without module closure</span>
-                                                        </dd>
-                                                </dl>
-
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
                                     <div class="" rel="yui:method" resource="#method_deps">
                                     <h4>
                                         <a name="method_deps">deps</a></h4>
@@ -145,7 +79,7 @@ without to use jsonp (because using generated namespace will avoid caching)
                                         
                                         
                                         
-                                        Object
+                                        object
                                             <strong property="yui:name">deps</strong>
                                            (
                                                 
@@ -166,7 +100,7 @@ without to use jsonp (because using generated namespace will avoid caching)
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">deps</span>
-                                                        &lt;<span property="yui:type">Object|undefined|string</span>&gt;
+                                                        &lt;<span property="yui:type">object|undefined|string</span>&gt;
                                                         </code>
                                                         <span property="yui:description"></span>
                                                         </dd>
@@ -189,12 +123,12 @@ without to use jsonp (because using generated namespace will avoid caching)
                                         
                                         
                                         
-                                        Function
+                                        function
                                             <strong property="yui:name">exec</strong>
                                            (
                                                 
                                                         
-                                                         module
+                                                         fileName
                                                     
                                                 
                                             )
@@ -209,7 +143,7 @@ without to use jsonp (because using generated namespace will avoid caching)
                                                 <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">module</span>
+                                                        <code><span property="yui:name">fileName</span>
                                                         &lt;<span property="yui:type">string</span>&gt;
                                                         </code>
                                                         <span property="yui:description"></span>
@@ -225,28 +159,33 @@ without to use jsonp (because using generated namespace will avoid caching)
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:method" resource="#method_isModule">
+                                    <div class="" rel="yui:method" resource="#method_loaded">
                                     <h4>
-                                        <a name="method_isModule">isModule</a></h4>
+                                        <a name="method_loaded">loaded</a></h4>
                                     <div class="detail" >
                                         <code>
                                         
                                         
                                         
-                                        void
-                                            <strong property="yui:name">isModule</strong>
+                                        function|object
+                                            <strong property="yui:name">loaded</strong>
                                            (
                                                 
                                                         
-                                                         module
+                                                         name
+                                                    
+                                                
+                                                        , 
+                                                         value
                                                     
                                                 
                                             )
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Check if the module is defined, else throw an error
-XXX throw an error or just call an error callback ?
+                                            Getter and setter for global loaded files object to avoid double loading.
+Can be used if you have already loaded some files before not using loader,
+and there is no dom element contained such url or you want to avoid domCheck
                                         </div>
 
                                         <div class="description">
@@ -254,8 +193,14 @@ XXX throw an error or just call an error callback ?
                                                 <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">module</span>
-                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        <code><span property="yui:name">name</span>
+                                                        &lt;<span property="yui:type">string|object|undefined</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"></span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">value</span>
+                                                        &lt;<span property="yui:type">string|object</span>&gt;
                                                         </code>
                                                         <span property="yui:description"></span>
                                                         </dd>
@@ -278,23 +223,19 @@ XXX throw an error or just call an error callback ?
                                         
                                         
                                         
-                                        Function
+                                        function
                                             <strong property="yui:name">remove</strong>
                                            (
                                                 
                                                         
-                                                         module
-                                                    
-                                                
-                                                        , 
-                                                         [deep]
+                                                         name
                                                     
                                                 
                                             )
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Remove loaded dependencies
+                                            Remove loaded - clean dom and gloaded object
                                         </div>
 
                                         <div class="description">
@@ -302,16 +243,54 @@ XXX throw an error or just call an error callback ?
                                                 <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">module</span>
-                                                        &lt;<span property="yui:type">string|Object|undefined</span>&gt;
+                                                        <code><span property="yui:name">name</span>
+                                                        &lt;<span property="yui:type">string|array|undefined</span>&gt;
                                                         </code>
                                                         <span property="yui:description"></span>
                                                         </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_setup">
+                                    <h4>
+                                        <a name="method_setup">setup</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        object|function
+                                            <strong property="yui:name">setup</strong>
+                                           (
+                                                
+                                                        
+                                                         defaults
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Getter and setter for defaults
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">[deep]</span>
-                                                        &lt;<span property="yui:type">boolean</span>&gt;
+                                                        <code><span property="yui:name">defaults</span>
+                                                        &lt;<span property="yui:type">object|undefined</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> destroy also dependencies and dependencies dependencies</span>
+                                                        <span property="yui:description"></span>
                                                         </dd>
                                                 </dl>
 
@@ -348,15 +327,14 @@ XXX throw an error or just call an error callback ?
                         <ul class="content">
                                 <li class="selected"><a href="module_loader.html" title="loader">loader</a></li>
                                 <li class=""><a href="module_loaderloader.html" title="loaderLoader">loaderLoader</a></li>
-                                <li class=""><a href="module_utils.html" title="utils">utils</a></li>
+                                <li class=""><a href="module_registermodule.html" title="registerModule">registerModule</a></li>
                         </ul>
                     </div>
 
                     <div id="classList" class="module">
                         <h4>Classes</h4>
                         <ul class="content">
-                                <li class=""><a href="Loader.html" title="Loader">Loader</a></li>
-                                <li class="selected"><a href="loader.html" title="loader">loader</a></li>
+                                <li class="selected"><a href="Loader.html" title="Loader">Loader</a></li>
                         </ul>
                     </div>
 
@@ -364,7 +342,6 @@ XXX throw an error or just call an error callback ?
                         <h4>Files</h4>
                         <ul class="content">        
                                 <li class=""><a href="loader.js.html" title="loader.js">loader.js</a></li>
-                                <li class=""><a href="loaderLoader.js.html" title="loaderLoader.js">loaderLoader.js</a></li>
                         </ul>
                     </div>
 
@@ -372,11 +349,11 @@ XXX throw an error or just call an error callback ?
                     <div id="methodsList" class="module">
                         <h4>Methods</h4>
                         <ul class="content">        
-                                <li class=""><a href="#method____registerLoaderModule___" title="___registerLoaderModule___">___registerLoaderModule___</a></li>
                                 <li class=""><a href="#method_deps" title="deps">deps</a></li>
                                 <li class=""><a href="#method_exec" title="exec">exec</a></li>
-                                <li class=""><a href="#method_isModule" title="isModule">isModule</a></li>
+                                <li class=""><a href="#method_loaded" title="loaded">loaded</a></li>
                                 <li class=""><a href="#method_remove" title="remove">remove</a></li>
+                                <li class=""><a href="#method_setup" title="setup">setup</a></li>
                         </ul>
                     </div>
 
@@ -388,7 +365,7 @@ XXX throw an error or just call an error callback ?
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"url": "Loader.html#method_addHandler", "access": "", "host": "Loader", "type": "method", "name": "addHandler"}, {"url": "Loader.html#method_css", "access": "", "host": "Loader", "type": "method", "name": "css"}, {"url": "loader.html#method_deps", "access": "", "host": "loader", "type": "method", "name": "deps"}, {"url": "Loader.html#method_dispatch", "access": "", "host": "Loader", "type": "method", "name": "dispatch"}, {"url": "loader.html#method_exec", "access": "", "host": "loader", "type": "method", "name": "exec"}, {"url": "Loader.html#method_img", "access": "", "host": "Loader", "type": "method", "name": "img"}, {"url": "loader.html#method_isModule", "access": "", "host": "loader", "type": "method", "name": "isModule"}, {"url": "Loader.html#method_js", "access": "", "host": "Loader", "type": "method", "name": "js"}, {"url": "Loader.html#method_loaded", "access": "", "host": "Loader", "type": "method", "name": "loaded"}, {"url": "loader.html#method____registerLoaderModule___", "access": "", "host": "loader", "type": "method", "name": "___registerLoaderModule___"}, {"url": "Loader.html#method_remove", "access": "", "host": "Loader", "type": "method", "name": "remove"}, {"url": "loader.html#method_remove", "access": "", "host": "loader", "type": "method", "name": "remove"}, {"url": "Loader.html#method_setup", "access": "", "host": "Loader", "type": "method", "name": "setup"}];
+    var ALL_YUI_PROPS = [{"url": "Loader.html#method_deps", "access": "", "host": "Loader", "type": "method", "name": "deps"}, {"url": "Loader.html#method_exec", "access": "", "host": "Loader", "type": "method", "name": "exec"}, {"url": "Loader.html#method_loaded", "access": "", "host": "Loader", "type": "method", "name": "loaded"}, {"url": "Loader.html#method_remove", "access": "", "host": "Loader", "type": "method", "name": "remove"}, {"url": "Loader.html#method_setup", "access": "", "host": "Loader", "type": "method", "name": "setup"}];
 </script>
 </body>
 </html>

@@ -1,10 +1,5 @@
 /**
  * Loader extension for dependencies management
- * 
- * @version 0.1 
- * @requires utils.js loader.js
- * @license Dual licensed under the MIT and GPL licenses.
- * @author Oleg Slobodskoi aka Kof (http://jsui.de)
  */
 
 var // all packages dependencies
@@ -22,10 +17,9 @@ var // all packages dependencies
 
 /**
  * Load module described in dependencies json
- * @class loader
- * @param {string|Object} module
- * @param {Function|Object} [options] function or options object
- * @return {Function}
+ * @param {string|object} module
+ * @param {function|object} [options] function or options object
+ * @return {function}
  */
 function loader( module, options ) {
     var fn = arguments.callee;
@@ -153,6 +147,7 @@ function parseDeps( module, s, deps) {
  * XXX throw an error or just call an error callback ?
  * @method isModule
  * @param {string} module
+ * @private
  */
 function isModule( module ) {
     if ( !dependencies[module] ) 
@@ -162,19 +157,21 @@ function isModule( module ) {
 
 /**
  * Convert string with char separated items to array
- * @param {string|Array|undefined} items
+ * @param {string|array|undefined} items
  * @param {string} [separator]
- * @return {Array}
+ * @return {array}
+ * @private
  */
 function split( items, separator ) {
     return $.typeOf(items) === 'string' ? items.split( separator || loader.defaults.separator ) : ( items || [] );
 }
 
-$.extend(true, loader, Loader, {
+$.extend(loader, Loader, {
     /**
      * Getter and setter for dependencies
-     * @param {Object|undefined|string} deps
-     * @return {Object}
+     * @method deps
+     * @param {object|undefined|string} deps
+     * @return {object}
      */
     deps: function( deps ) {
         if ( deps ) {
@@ -185,9 +182,10 @@ $.extend(true, loader, Loader, {
     },
     /**
      * Remove loaded dependencies
-     * @param {string|Object|undefined} module
-     * @param {boolean} [deep] destroy also dependencies and dependencies dependencies
-     * @return {Function}
+     * @method remove
+     * @param {string|object|undefined} module
+     * @param {boolean} deep destroy also dependencies and dependencies dependencies
+     * @return {function}
      */
     remove: function( module, deep ) {
         var self = this;
@@ -216,9 +214,10 @@ $.extend(true, loader, Loader, {
         return this;    
     },
     /**
-     * Execute closure with a module or evaluate in global context 
-     * @param {string} module
-     * @return {Function}
+     * Execute closure with a module or evaluate in global context
+     * @method exec 
+     * @param {string} fileName
+     * @return {function}
      */
     exec: function( fileName ) {
         if ( !registred[fileName] ) return this;
@@ -243,17 +242,3 @@ $.extend(true, loader, Loader, {
 
 // expose new loader function
 global.loader = loader;
-
-
-/**
- * This is a second global namespace, I know,
- * the purpose is to make the main loader namespace portable, 
- * without to use jsonp (because using generated namespace will avoid caching)
- * @param {string} id
- * @param {Function} fn
- * @param {boolean} globalEval if true module will be converted toString and evaluated in the global context without module closure
- */
-global.___registerLoaderModule___ = function registerModule( id, fn, globalEval ) {
-    globalEval && (fn.globalEval = globalEval);
-    registred[id] = fn;
-};
